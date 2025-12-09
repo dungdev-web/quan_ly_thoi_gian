@@ -1,0 +1,412 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css");
+
+* {
+  font-family: 'Poppins', sans-serif;
+}
+
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+/* From Uiverse.io by Shoh2008 */ 
+.loader {
+  width: 45px;
+  height: 40px;
+  background: linear-gradient(#0000 calc(1*100%/6),#000 0 calc(3*100%/6),#0000 0),
+            linear-gradient(#0000 calc(2*100%/6),#000 0 calc(4*100%/6),#0000 0),
+            linear-gradient(#0000 calc(3*100%/6),#000 0 calc(5*100%/6),#0000 0);
+  background-size: 10px 400%;
+  background-repeat: no-repeat;
+  animation: matrix 1s infinite linear;
+  justify-content: center;
+  margin: auto;
+  margin-top: 20%;
+
+}
+
+@keyframes matrix {
+  0% {
+    background-position: 0% 100%, 50% 100%, 100% 100%
+  }
+
+  100% {
+    background-position: 0% 0%, 50% 0%, 100% 0%
+  }
+}
+:root {
+    --color-primary: #816ce0;
+    --color-muted: #b4b4b4;
+    --color-border: #a9a9a9;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+/* -- Card and Content Layout (image_ddcce1.jpg) -- */
+.card {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 6px;
+    width: 90vw;
+    max-width: 800px;
+    box-shadow: 0px 20px 54px rgb(126 48 255 / 12%);
+}
+
+.content {
+    padding: 32px;
+    width: 50%;
+}
+
+/* -- Input, Button, and Form (image_ddccc3.jpg) -- */
+input,
+button {
+    font-size: 16px;
+    font-family: inherit;
+    display: block;
+    padding: 0 16px;
+    border-radius: 6px;
+    height: 48px;
+}
+
+form > input {
+    width: 100%;
+    margin-bottom: 10px;
+    color: inherit;
+    border: 1px solid var(--color-border);
+    background: transparent;
+}
+
+form > input::placeholder {
+    color: var(--color-muted);
+}
+
+.form > .row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+.content > form {
+    padding: 0;
+}
+
+form a {
+    color: var(--color-muted);
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+form > button {
+    color: #ffffff;
+    background: var(--color-primary);
+    border: 0;
+    padding: 0 48px;
+}
+
+/* -- Text and Link Styling (image_ddccc3.jpg & image_ddcce1.jpg) -- */
+.content > h2 {
+    margin-bottom: 20px;
+}
+
+.content > h3 {
+    color: var(--color-muted);
+    margin-bottom: 40px;
+}
+
+.have {
+    font-size: 14px;
+    margin-top: 30px;
+    color: var(--color-muted);
+}
+
+p a {
+    color: var(--color-primary);
+}
+
+/* -- Hero/Graphic Section (image_ddcce1.jpg) -- */
+.hero {
+    width: 50%;
+    align-self: stretch;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    background: linear-gradient(45deg, #7386d8, #ac5df1);
+}
+
+.logo-white {
+    height: 40px;
+    display: none;
+}
+
+.graphic {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.logo {
+    margin-bottom: 40px;
+    height: 60px;
+}
+
+.content,
+.hero {
+    transition: width 0.3s;
+}
+.sidebar {
+    position: fixed;
+    top: 24px;
+    left: 24px;
+    bottom: 44px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 260px;
+    border-radius: 16px;
+    padding: 0 16px;
+    background: rgb(0 0 0 / 50%);
+    backdrop-filter: blur(30px);
+    transition: width 0.4s;
+  }
+
+  .sidebar header {
+    display: flex;
+    align-items: center;
+    height: 72px;
+    padding-top: 10px;
+    border-bottom: 1px solid rgb(255 255 255 / 8%);
+  }
+
+  .sidebar header img {
+    height: 44px;
+  }
+
+  .sidebar button {
+    position: relative;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    height: 50px;
+    width: 100%;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 16px;
+    padding: 0 16px;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    color: rgb(255 255 255 / 95%);
+  }
+
+  .sidebar button p:nth-child(2) {
+    flex: 1 1 auto;
+  }
+
+  .sidebar .active {
+    background: rgb(0 0 0 / 15%);
+  }
+
+  .sidebar button i {
+    transition: 0.3s;
+  }
+  .sidebar i {
+    font-size: 20px;
+    width: 20px;
+    max-width: 20px;
+    min-width: 20px;
+  }
+  .sidebar button i:nth-child(3) {
+    rotate: -180deg;
+  }
+
+  .sidebar button:not(.active):hover {
+    background: rgb(0 0 0 / 5%);
+  }
+
+  .sidebar ul {
+    display: grid;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+  }
+
+  .sub-menu {
+    position: relative;
+    overflow: hidden;
+    height: 0;
+    transition: 0.5s;
+  }
+
+  .sub-menu ul {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: grid;
+  }
+
+  .sub-menu button {
+    padding-left: 48px;
+  }
+
+  .sub-menu button::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 22.5px;
+    translate: 0 -50%;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 35%);
+  }
+/* -- Media Queries (image_ddcca7.jpg) -- */
+
+/* Tablet/Smaller Desktop */
+@media (width <= 700px) {
+    .content {
+        width: 60%;
+    }
+    .hero {
+        width: 40%;
+    }
+}
+
+/* Mobile/Very Small Screens */
+@media (width <= 600px) {
+    .content,
+    .hero {
+        transition: none;
+    }
+
+    .card {
+        padding: 24px 24px 0;
+        flex-direction: column-reverse;
+        align-items: center;
+    }
+
+    .content {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .hero {
+        width: 100%;
+        height: 160px;
+    }
+
+    .card h2 {
+        margin-bottom: 10px;
+    }
+
+    .card form {
+        width: 100%;
+    }
+
+    .card form button {
+        width: 100%;
+    }
+
+    .logo,
+    .graphic {
+        display: none;
+    }
+
+    .logo-white {
+        display: block;
+    }
+
+    .content > img {
+        height: 28px;
+    }
+}
+/* From Uiverse.io by Shoh2008 */ 
+.loader-wrapper {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loader1 {
+  width: 48px;
+  height: 48px;
+  display: inline-block;
+  position: relative;
+  background: #000;
+  box-sizing: border-box;
+  animation: zeroRotation 1s ease infinite alternate-reverse;
+}
+
+@keyframes zeroRotation {
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+
+  100% {
+    transform: scale(0.3) rotate(360deg);
+  }
+}
+input[placeholder="+"] {
+    width: 40px;
+    text-align: center;
+    color: red;
+}
+@keyframes fadeZoom {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fadeZoom {
+  animation: fadeZoom 0.2s ease-out;
+}
