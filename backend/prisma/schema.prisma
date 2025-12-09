@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int         @id @default(autoincrement())
+  username   String      @unique
+  password   String
+  todos      Todo[]
+  categories Category[] 
+  timeLogs   TimeLog[]  
+}
+
+model Todo {
+  id          Int        @id @default(autoincrement())
+  title       String
+  description String?
+  status      String      @default("In progess")
+  priority    String      @default("medium")
+  startTime   DateTime?
+  endTime     DateTime?
+  dueDate     DateTime?
+  position    Int         @default(0)
+  archived    Boolean     @default(false)
+  userId      Int
+  user        User        @relation(fields: [userId], references: [id])
+  categoryId  Int?
+  category    Category?   @relation(fields: [categoryId], references: [id])
+  subtasks    Subtask[]
+  timeLogs   TimeLog[]   // 👈 Thêm dòng này
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Category {
+  id      Int    @id @default(autoincrement())
+  name    String
+  todos   Todo[]
+  userId  Int
+  user    User   @relation(fields: [userId], references: [id])
+}
+
+model Subtask {
+  id        Int      @id @default(autoincrement())
+  title     String
+  completed Boolean  @default(false)
+  dueDate     DateTime?
+  position    Int         @default(0)
+  todoId    Int
+  todo      Todo     @relation(fields: [todoId], references: [id])
+}
+model TimeLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  todoId    Int?
+  startTime DateTime
+  endTime   DateTime?
+  duration  Int?     // số phút, tính tự động khi endTime != null
+
+  user      User     @relation(fields: [userId], references: [id])
+  todo      Todo?    @relation(fields: [todoId], references: [id])
+
+  createdAt DateTime  @default(now())
+}
