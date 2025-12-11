@@ -38,3 +38,44 @@ export async function getChartData() {
     }
     return response.json();
 }
+export async function SartLog(todoId) {
+  const response = await fetch(`${API_URL}/start`, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ todoId }),
+  });
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err.error || "Failed to start time log");
+  }
+
+  return response.json();
+}
+export async function getRunningLog() {
+    const response = await fetch(`${API_URL}/running`, {
+    method: "GET",
+    credentials: "include", // Gửi kèm cookie
+    headers: {
+        "Content-Type": "application/json",
+    },
+    });
+    if (!response.ok) {
+    throw new Error("Failed to fetch running time log");
+    }
+    return response.json();;
+}
+export async function StopLog() {
+    const response = await fetch(`${API_URL}/stop`, {
+    method: "POST",
+    credentials: "include", // Gửi kèm cookie
+    headers: {
+        "Content-Type": "application/json",
+    },
+    });
+    if (!response.ok) {
+    throw new Error("Failed to stop time log");
+    }
+    return response.json();;
+}
