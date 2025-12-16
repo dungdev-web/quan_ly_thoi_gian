@@ -1,25 +1,32 @@
 import prisma from "../prisma/client.js";
 const TodoRepository = {
   createTodo: (userId, data) => {
-  return prisma.todo.create({
-    data: {
-      ...data,
-      userId,
-      startTime: data.startTime ? new Date(data.startTime) : null,
-      endTime: data.endTime ? new Date(data.endTime) : null,
-      dueDate: data.dueDate ? new Date(data.dueDate) : null,
-    },
-  });
-},
+    return prisma.todo.create({
+      data: {
+        ...data,
+        userId,
+        startTime: data.startTime ? new Date(data.startTime) : null,
+        endTime: data.endTime ? new Date(data.endTime) : null,
+        dueDate: data.dueDate ? new Date(data.dueDate) : null,
+      },
+    });
+  },
 
-
-  findAllByUser: (userId) =>
-    prisma.todo.findMany({
-      where: { userId },
-      include: { subtasks: true, category: true },
-      orderBy: { position: "asc" },
-    }),
-
+  findAllByUser(userId, { archived = false } = {}) {
+    return prisma.todo.findMany({
+      where: {
+        userId,
+        archived,
+      },
+      include: {
+        subtasks: true,
+        category: true,
+      },
+      orderBy: {
+        position: "asc",
+      },
+    });
+  },
   findById: (id) =>
     prisma.todo.findUnique({
       where: { id },
@@ -32,7 +39,7 @@ const TodoRepository = {
       data,
     }),
 
-   delete: async (id) => {
+  delete: async (id) => {
     const todo = await prisma.todo.findUnique({
       where: { id },
       include: { subtasks: true },
@@ -53,6 +60,17 @@ const TodoRepository = {
     prisma.todo.update({
       where: { id },
       data: { position },
+    }),
+  findAchievedTodosByUser: (userId) =>
+    prisma.todo.findMany({
+      where: { userId, archived: true },
+      include: { subtasks: true, category: true },
+      orderBy: { position: "asc" },
+    }),
+  setArchivedTodo: (id, archived) =>
+    prisma.todo.update({
+      where: { id },
+      data: { archived },
     }),
 };
 

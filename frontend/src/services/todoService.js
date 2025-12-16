@@ -77,3 +77,21 @@ export async function updatePosition(id, newPosition) {
     });
       return res.json();
   };
+  export async function getArchivedTodos() {
+    const { loggedIn, user } = await checkLogin();
+    if (!loggedIn) throw new Error("Not logged in");
+    const res = await fetch(`${API_URL}/user/archived/${user.userId}`, {
+      method: "GET",
+      credentials: "include",
+    });
+    return res.json();
+  }
+  export async function setArchivedTodo(id, archived) {
+    const res = await fetch(`${API_URL}/archive/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ archived }),
+      credentials: "include",
+    });
+    return res.json();
+  }

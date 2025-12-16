@@ -8,7 +8,7 @@ import { useState, useEffect } from "react";
 import Loader from "./components/Loader";
 import Aside from "./components/Aside";
 import CreateTask from "./pages/CreateTask";
-
+import ListTask from "./pages/List";
 function PrivateRoute({ children, auth }) {
   if (!auth) return <Navigate to="/login" replace />;
   return children;
@@ -58,6 +58,14 @@ function AppContent() {
           element={
             <PrivateRoute auth={auth}>
               <CreateTask />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/archived"
+          element={
+            <PrivateRoute auth={auth}>
+              <ListTask />
             </PrivateRoute>
           }
         />

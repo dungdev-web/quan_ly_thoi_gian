@@ -5,6 +5,7 @@ import {
   deleteTodo,
   updatePosition,
   update,
+  setArchivedTodo,
 } from "../services/todoService";
 import CreateTaskModal from "../components/CreateTaskModal";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
@@ -17,7 +18,43 @@ export default function CreateTask() {
   const sortedTodos = [...todos].sort((a, b) => a.position - b.position);
   const [openTask, setOpenTask] = useState(null);
 
+ 
+
   // ------------------------------------------
+  // Fetch todos
+  // ------------------------------------------
+  const fetchTodos = async () => {
+    try {
+      const data = await getTodos();
+      // ⚠️ chỉ lấy task CHƯA archive
+      setTodos(data.filter((t) => !t.archived));
+    } catch (err) {
+      console.error(err);
+      setTodos([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTodos();
+  }, []);
+
+  // ---------------- ARCHIVE (CÁCH 1) ----------------
+  const handleArchiveTodo = async (todoId) => {
+    try {
+      await setArchivedTodo(todoId, true);
+
+      // ✅ REMOVE NGAY TRÊN UI
+      setTodos((prev) => prev.filter((t) => t.id !== todoId));
+
+      // đóng modal
+      setOpenTask(null);
+    } catch (err) {
+      alert(err.message || "Lỗi archive task");
+    }
+  };
+ // ------------------------------------------
   // DRAG END
   // ------------------------------------------
   async function onDragEnd(result) {
@@ -77,26 +114,6 @@ export default function CreateTask() {
 
     fetchTodos();
   }
-
-  // ------------------------------------------
-  // Fetch todos
-  // ------------------------------------------
-  const fetchTodos = async () => {
-    try {
-      const data = await getTodos();
-      setTodos(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.error("Failed to fetch todos:", err);
-      setTodos([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchTodos();
-  }, []);
-
   // ------------------------------------------
   // ADD
   // ------------------------------------------
@@ -171,7 +188,8 @@ export default function CreateTask() {
         <DragDropContext onDragEnd={onDragEnd}>
           <div className="pl-[285px] grid grid-cols-3 gap-4">
             {Object.keys(columns).map((colKey) => (
-              <Droppable key={colKey} droppableId={colKey}>
+              <Droppable key={colKey} droppableId={colKey} 
+>
                 {(provided) => (
                   <div
                     ref={provided.innerRef}
@@ -226,7 +244,7 @@ export default function CreateTask() {
 
         {/* MODAL SUBTASK */}
         {openTask && (
-          <SubtaskModal task={openTask} onClose={() => setOpenTask(null)} />
+          <SubtaskModal task={openTask} onClose={() => setOpenTask(null)}  onArchive={handleArchiveTodo}/>
         )}
         {openCreateModal && (
           <CreateTaskModal

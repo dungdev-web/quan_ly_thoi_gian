@@ -1,9 +1,21 @@
 import { useState, useEffect } from "react";
 
 import { SartLog, StopLog, getRunningLog } from "../services/timeslogService";
-export default function SubtaskModal({ task, onClose }) {
+export default function SubtaskModal({ task, onClose, onArchive }) {
   const [isRunning, setIsRunning] = useState(false);
   const [seconds, setSeconds] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  const handleArchive = async () => {
+    try {
+      setLoading(true);
+      await onArchive(task.id);
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
   const handleStartLog = async () => {
     try {
       await SartLog(task.id);
@@ -68,6 +80,13 @@ export default function SubtaskModal({ task, onClose }) {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white w-[400px] rounded shadow-lg p-5 relative">
+        <button
+          onClick={handleArchive}
+          disabled={loading}
+          className="px-4 py-2 bg-red-600 text-white rounded"
+        >
+          {loading ? "Archiving..." : <i className="fa-solid fa-ban"></i>}
+        </button>{" "}
         <button
           onClick={onClose}
           className="absolute right-3 top-3 text-gray-500 hover:text-black"
