@@ -18,7 +18,10 @@ const TodoController = {
   getAll: async (req, res) => {
     try {
       const userId = Number(req.params.userId);
-      const todos = await TodoService.getTodosByUser(userId);
+
+      const archived = req.query.archived === "true";
+
+      const todos = await TodoService.getTodosByUser(req.userId, { archived });
       res.json(todos);
     } catch (err) {
       res.status(500).json({ error: err.message });
@@ -60,6 +63,25 @@ const TodoController = {
       const id = Number(req.params.id);
       const { position } = req.body;
       const todo = await TodoService.updateTodoPosition(id, position);
+      res.json(todo);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  },
+  getAchievedTodos: async (req, res) => {
+    try {
+      const userId = Number(req.params.userId);
+      const todos = await TodoService.getAchievedTodosByUser(userId);
+      res.json(todos);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  },
+  setArchivedTodo: async (req, res) => {
+    try {
+      const id = Number(req.params.id);
+      const { archived } = req.body;
+      const todo = await TodoService.serArchivedTodo(id, archived);
       res.json(todo);
     } catch (err) {
       res.status(500).json({ error: err.message });

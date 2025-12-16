@@ -19,6 +19,11 @@ export default function Aside() {
     navigate("/create"); // 🔥 chuyển đến /create
   };
 
+  const gotoArchivedTasks = () => {
+    setActiveMenu("archived");
+
+    navigate("/archived"); // 🔥 chuyển đến /archived
+  };
   return (
     <aside className="sidebar">
       <header>
@@ -66,6 +71,18 @@ export default function Aside() {
               </li>
             </ul>
           </div>
+        </li>
+        {/* Archived */}
+        <li>
+          <button
+            type="button"
+            className={activeMenu === "archived" ? "active" : ""}
+            onClick={gotoArchivedTasks}
+          >
+            <i className="fa-solid fa-box-archive"></i>
+            <p>Archived</p>
+            <i className="ai-chevron-down-small"></i>
+          </button>
         </li>
       </ul>
     </aside>
