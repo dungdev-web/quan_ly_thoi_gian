@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { getArchivedTodos } from "../services/todoService";
-import { Archive, Calendar, Clock, Tag, AlertCircle } from "lucide-react";
-
+import { getArchivedTodos, setArchivedTodo } from "../services/todoService";
+import {
+  Archive,
+  Calendar,
+  Clock,
+  Tag,
+  AlertCircle,
+  RotateCcw,
+} from "lucide-react";
+import { update } from "../services/todoService";
 export default function ListTask() {
   const [archivedTodos, setArchivedTodos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -23,6 +30,19 @@ export default function ListTask() {
       setLoading(false);
     }
   };
+  const handleUnarchive = async (id) => {
+    try {
+      // 1️⃣ bỏ archived
+      await setArchivedTodo(id, false);
+      // 2️⃣ đổi status (tùy bạn muốn về cột nào)
+      await update(id, { status: "In progress" });
+
+      // 3️⃣ XÓA khỏi list archived → UI biến mất ngay
+      setArchivedTodos((prev) => prev.filter((t) => t.id !== id));
+    } catch (err) {
+      alert(err.message || "Không thể hoàn tác công việc");
+    }
+  };
 
   const getPriorityColor = (priority) => {
     const colors = {
@@ -36,7 +56,7 @@ export default function ListTask() {
   const getStatusColor = (status) => {
     const colors = {
       done: "bg-green-100 text-green-800 border-green-200",
-      "in-progress": "bg-blue-100 text-blue-800 border-blue-200",
+      "In progress": "bg-blue-100 text-blue-800 border-blue-200",
       pending: "bg-gray-100 text-gray-800 border-gray-200",
     };
     return colors[status] || "bg-gray-100 text-gray-800 border-gray-200";
@@ -124,10 +144,18 @@ export default function ListTask() {
                 className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200"
               >
                 {/* Card Header */}
-                <div className="bg-gradient-to-r from-gray-600 to-gray-700 p-4">
+                <div className="bg-gradient-to-r from-gray-600 to-gray-700 p-4 flex justify-between items-center">
                   <h3 className="text-xl font-bold text-white truncate">
                     {todo.title}
                   </h3>
+                  {/* 🔁 HOÀN TÁC */}
+                  <button
+                    onClick={() => handleUnarchive(todo.id)}
+                    className="flex items-center gap-1 text-sm bg-white text-gray-700 px-2 py-1 rounded hover:bg-gray-200"
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                    Hoàn tác
+                  </button>
                 </div>
 
                 {/* Card Body */}
@@ -148,7 +176,7 @@ export default function ListTask() {
                     >
                       {todo.status === "done"
                         ? "Hoàn thành"
-                        : todo.status === "in-progress"
+                        : todo.status === "In progress"
                         ? "Đang thực hiện"
                         : "Chờ xử lý"}
                     </span>

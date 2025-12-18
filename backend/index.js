@@ -29,7 +29,7 @@ app.use(
 // 4️⃣ Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/todos", todoRoutes);
-app.use("/subtasks", subtaskRoutes);  // ❗ Đã sửa
+app.use("/api/subtasks", subtaskRoutes);  // ❗ Đã sửa
 app.use("/api/time-logs", timeLogRoutes);
 // 5️⃣ Start server
 app.listen(5000, () => console.log("🚀 Server running on port 5000"));

@@ -30,7 +30,7 @@ const UserController = {
     const token = req.cookies.token;
     const payload = UserService.verifyToken(token);
     if (payload) {
-      res.json({ valid: true, userId: payload.userId });
+      res.json({ valid: true, userId: payload.userId, username: payload.username });
     } else {
       res.status(401).json({ valid: false, error: "Invalid token" });
     }

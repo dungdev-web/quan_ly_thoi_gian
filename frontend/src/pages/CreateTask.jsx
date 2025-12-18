@@ -10,23 +10,18 @@ import {
 import CreateTaskModal from "../components/CreateTaskModal";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import SubtaskModal from "../components/SubtaskModal";
+
 export default function CreateTask() {
   const [todos, setTodos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [openCreateModal, setOpenCreateModal] = useState(false);
-
-  const sortedTodos = [...todos].sort((a, b) => a.position - b.position);
   const [openTask, setOpenTask] = useState(null);
 
- 
+  const sortedTodos = [...todos].sort((a, b) => a.position - b.position);
 
-  // ------------------------------------------
-  // Fetch todos
-  // ------------------------------------------
   const fetchTodos = async () => {
     try {
       const data = await getTodos();
-      // ⚠️ chỉ lấy task CHƯA archive
       setTodos(data.filter((t) => !t.archived));
     } catch (err) {
       console.error(err);
@@ -40,58 +35,40 @@ export default function CreateTask() {
     fetchTodos();
   }, []);
 
-  // ---------------- ARCHIVE (CÁCH 1) ----------------
   const handleArchiveTodo = async (todoId) => {
     try {
       await setArchivedTodo(todoId, true);
-
-      // ✅ REMOVE NGAY TRÊN UI
       setTodos((prev) => prev.filter((t) => t.id !== todoId));
-
-      // đóng modal
       setOpenTask(null);
     } catch (err) {
       alert(err.message || "Lỗi archive task");
     }
   };
- // ------------------------------------------
-  // DRAG END
-  // ------------------------------------------
+
   async function onDragEnd(result) {
     const { destination, source, draggableId } = result;
     if (!destination) return;
 
     const taskId = Number(draggableId);
-
     const sourceCol = source.droppableId;
     const destCol = destination.droppableId;
 
-    // Lấy tasks của cột trước
     const sourceTasks = sortedTodos.filter((t) => t.status === sourceCol);
     const destTasks = sortedTodos.filter((t) => t.status === destCol);
 
-    // Kéo trong CÙNG 1 CỘT
     if (sourceCol === destCol) {
       const items = Array.from(sourceTasks);
-
-      // reorder local array
       const [moved] = items.splice(source.index, 1);
       items.splice(destination.index, 0, moved);
 
-      // cập nhật toàn bộ position
-      for (let i = 0; i < items.length; i++) {
-        await updatePosition(items[i].id, i);
-      }
+      await Promise.all(
+        items.map((item, index) => updatePosition(item.id, index))
+      );
 
       fetchTodos();
       return;
     }
 
-    // ------------------------------------------------
-    // Kéo SANG CỘT MỚI
-    // ------------------------------------------------
-
-    // 1. Xóa khỏi cột cũ
     const newSource = Array.from(sourceTasks);
     const [moved] = newSource.splice(source.index, 1);
 
@@ -99,24 +76,19 @@ export default function CreateTask() {
       await updatePosition(newSource[i].id, i);
     }
 
-    // 2. Thêm vào cột mới
     const newDest = Array.from(destTasks);
     moved.status = destCol;
     newDest.splice(destination.index, 0, moved);
 
-    // update status
-    await update(taskId, destCol);
+    await update(taskId, { status: destCol });
 
-    // update toàn bộ vị trí cột mới
     for (let i = 0; i < newDest.length; i++) {
       await updatePosition(newDest[i].id, i);
     }
 
     fetchTodos();
   }
-  // ------------------------------------------
-  // ADD
-  // ------------------------------------------
+
   const handleAddTask = async (data) => {
     await addTodo({
       title: data.title,
@@ -125,25 +97,9 @@ export default function CreateTask() {
       endTime: data.endTime,
       dueDate: data.dueDate,
     });
-
     fetchTodos();
   };
 
-  // ------------------------------------------
-  // TOGGLE
-  // ------------------------------------------
-  // const handleToggle = async (id, completed) => {
-  //   try {
-  //     await toggleTodo(id, completed);
-  //     fetchTodos();
-  //   } catch (err) {
-  //     console.error("Toggle failed:", err);
-  //   }
-  // };
-
-  // ------------------------------------------
-  // DELETE
-  // ------------------------------------------
   const handleDelete = async (id) => {
     try {
       await deleteTodo(id);
@@ -154,105 +110,178 @@ export default function CreateTask() {
     }
   };
 
-  // ------------------------------------------
-  // 3 CỘT KANBAN
-  // ------------------------------------------
-  const columns = {
-    todo: "Todo",
-    "In progess": "In Progress",
-    done: "Done",
+  const columns = [
+    { id: "todo", title: "📋 To Do", color: "from-gray-700 to-gray-800" },
+    { id: "In progress", title: "⚡ In Progress", color: "from-gray-800 to-gray-900" },
+    { id: "done", title: "✓ Done", color: "from-black to-gray-900" },
+  ];
+
+  const getTaskCount = (status) => {
+    return sortedTodos.filter((t) => t.status === status).length;
   };
 
   if (loading)
     return (
-      <div class="loader-wrapper">
-        <div class="loader1"></div>
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-gray-900 mx-auto mb-4"></div>
+          <p className="text-gray-700 font-semibold text-lg">Đang tải...</p>
+        </div>
       </div>
     );
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold mb-4 text-center">My To-Do List</h1>
-
-      <div className="flex gap-2 mb-4 max-w-md mx-auto">
-        <button
-          onClick={() => setOpenCreateModal(true)}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 mb-4"
-        >
-          + Add Task
-        </button>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 pl-[280px]">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-gray-900 via-black to-gray-900 shadow-2xl">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">
+                Task Manager
+              </h1>
+              <p className="text-gray-300 text-sm">
+                {todos.length} tasks • {getTaskCount("done")} completed
+              </p>
+            </div>
+            <button
+              onClick={() => setOpenCreateModal(true)}
+              className="bg-white text-gray-900 px-6 py-3 rounded-xl font-semibold shadow-lg hover:bg-gray-100 transition-all transform hover:scale-105 flex items-center justify-center gap-2"
+            >
+              <span className="text-xl">+</span>
+              <span>New Task</span>
+            </button>
+          </div>
+        </div>
       </div>
 
-      {/* -----------------  KANBAN 3 CỘT ----------------- */}
-      <>
+      {/* Kanban Board */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <DragDropContext onDragEnd={onDragEnd}>
-          <div className="pl-[285px] grid grid-cols-3 gap-4">
-            {Object.keys(columns).map((colKey) => (
-              <Droppable key={colKey} droppableId={colKey} 
->
-                {(provided) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {columns.map((column) => (
+              <Droppable key={column.id} droppableId={column.id}>
+                {(provided, snapshot) => (
                   <div
                     ref={provided.innerRef}
                     {...provided.droppableProps}
-                    className="bg-gray-100 p-3 rounded shadow min-h-[350px]"
+                    className="flex flex-col h-full"
                   >
-                    <h2 className="text-lg font-bold mb-3">
-                      {columns[colKey]}
-                    </h2>
+                    {/* Column Header */}
+                    <div
+                      className={`bg-gradient-to-br ${column.color} rounded-2xl p-4 mb-4 shadow-lg`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <h2 className="text-white font-bold text-lg">
+                          {column.title}
+                        </h2>
+                        <span className="bg-white bg-opacity-20 text-white text-sm font-bold px-3 py-1 rounded-full">
+                          {getTaskCount(column.id)}
+                        </span>
+                      </div>
+                    </div>
 
-                    {sortedTodos
-                      .filter((t) => t.status === colKey)
-                      .map((t, index) => (
-                        <Draggable
-                          key={t.id}
-                          draggableId={t.id.toString()}
-                          index={index}
-                        >
-                          {(provided) => (
-                            <div
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}
-                              className="bg-white p-3 rounded shadow mb-3 cursor-pointer"
-                              onClick={() => setOpenTask(t)} // mở modal
+                    {/* Column Content */}
+                    <div
+                      className={`flex-1 bg-white bg-opacity-50 rounded-2xl p-4 min-h-[400px] transition-all ${
+                        snapshot.isDraggingOver
+                          ? "bg-gray-200 shadow-inner ring-2 ring-gray-400"
+                          : ""
+                      }`}
+                    >
+                      <div className="space-y-3">
+                        {sortedTodos
+                          .filter((t) => t.status === column.id)
+                          .map((task, index) => (
+                            <Draggable
+                              key={task.id}
+                              draggableId={task.id.toString()}
+                              index={index}
                             >
-                              <div className="flex justify-between items-center border-b pb-1">
-                                <span>{t.title}</span>
-
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleDelete(t.id);
-                                  }}
-                                  className="text-red-500"
+                              {(provided, snapshot) => (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                  onClick={() => setOpenTask(task)}
+                                  className={`bg-white rounded-xl p-4 shadow-md hover:shadow-xl transition-all cursor-pointer border-2 border-gray-200 hover:border-gray-400 group ${
+                                    snapshot.isDragging
+                                      ? "ring-2 ring-gray-400 shadow-2xl rotate-2"
+                                      : ""
+                                  }`}
                                 >
-                                  ❌
-                                </button>
-                              </div>
-                            </div>
-                          )}
-                        </Draggable>
-                      ))}
+                                  <div className="flex items-start justify-between gap-3">
+                                    <div className="flex-1 min-w-0">
+                                      <h3 className="font-semibold text-gray-900 mb-2 truncate">
+                                        {task.title}
+                                      </h3>
+                                      {task.description && (
+                                        <p className="text-sm text-gray-600 line-clamp-2 mb-3">
+                                          {task.description}
+                                        </p>
+                                      )}
+                                      {task.dueDate && (
+                                        <div className="flex items-center gap-2 text-xs text-gray-500">
+                                          <i className="fa-solid fa-calendar"></i>
+                                          <span>
+                                            {new Date(task.dueDate).toLocaleDateString("vi-VN")}
+                                          </span>
+                                        </div>
+                                      )}
+                                    </div>
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleDelete(task.id);
+                                      }}
+                                      className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-600 flex-shrink-0"
+                                    >
+                                      <i className="fa-solid fa-trash text-sm"></i>
+                                    </button>
+                                  </div>
 
-                    {provided.placeholder}
+                                  {/* Drag Handle Indicator */}
+                                  <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-center">
+                                    <div className="w-12 h-1 bg-gray-200 rounded-full group-hover:bg-gray-400 transition-colors"></div>
+                                  </div>
+                                </div>
+                              )}
+                            </Draggable>
+                          ))}
+                        {provided.placeholder}
+                      </div>
+
+                      {/* Empty State */}
+                      {getTaskCount(column.id) === 0 && (
+                        <div className="flex flex-col items-center justify-center h-64 text-gray-400">
+                          <i className="fa-solid fa-inbox text-4xl mb-3 opacity-30"></i>
+                          <p className="text-sm font-medium">No tasks yet</p>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
               </Droppable>
             ))}
           </div>
         </DragDropContext>
+      </div>
 
-        {/* MODAL SUBTASK */}
-        {openTask && (
-          <SubtaskModal task={openTask} onClose={() => setOpenTask(null)}  onArchive={handleArchiveTodo}/>
-        )}
-        {openCreateModal && (
-          <CreateTaskModal
-            onClose={() => setOpenCreateModal(false)}
-            onSubmit={handleAddTask}
-          />
-        )}
-      </>
+      {/* Modals */}
+      {openTask && (
+        <SubtaskModal
+          task={openTask}
+          onClose={() => setOpenTask(null)}
+          onArchive={handleArchiveTodo}
+          onUpdate={update}
+        />
+      )}
+      {openCreateModal && (
+        <CreateTaskModal
+          onClose={() => setOpenCreateModal(false)}
+          onSubmit={handleAddTask}
+        />
+      )}
     </div>
   );
 }
