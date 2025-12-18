@@ -33,11 +33,26 @@ const TodoRepository = {
       include: { subtasks: true, category: true },
     }),
 
-  update: (id, data) =>
-    prisma.todo.update({
+  update: (id, data) => {
+    const updateData = { ...data };
+
+    if (data.startTime !== undefined) {
+      updateData.startTime = data.startTime ? new Date(data.startTime) : null;
+    }
+
+    if (data.endTime !== undefined) {
+      updateData.endTime = data.endTime ? new Date(data.endTime) : null;
+    }
+
+    if (data.dueDate !== undefined) {
+      updateData.dueDate = data.dueDate ? new Date(data.dueDate) : null;
+    }
+
+    return prisma.todo.update({
       where: { id },
-      data,
-    }),
+      data: updateData,
+    });
+  },
 
   delete: async (id) => {
     const todo = await prisma.todo.findUnique({

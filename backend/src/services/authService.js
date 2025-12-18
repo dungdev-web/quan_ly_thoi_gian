@@ -20,7 +20,7 @@ const UserService = {
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) throw new Error("Invalid username or password");
 
-    const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "1d" });
+    const token = jwt.sign({ userId: user.id,username:user.username }, JWT_SECRET, { expiresIn: "1d" });
     return { user, token };
   },
 

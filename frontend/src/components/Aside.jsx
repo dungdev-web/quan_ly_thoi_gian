@@ -1,14 +1,29 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState,useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import logo from "../Tempo-removebg-preview.png";
-
+// import "./Aside.css"; // Import CSS file
+import { checkLogin } from "../services/authService";
 export default function Aside() {
   const [activeMenu, setActiveMenu] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const userData = await checkLogin();
+        setUser(userData.user);
+      } catch (err) {
+        console.error("Check login failed", err);
+      }
+    };
+    fetchUser();
+  }, []);
 
   const handleGotoPage = () => {
     setActiveMenu("dashboard");
-    navigate("/home"); // 🔥 chuyển đến /home
+    navigate("/home");
   };
 
   const handleMainClick = (key) => {
@@ -16,75 +31,109 @@ export default function Aside() {
   };
 
   const gotoCreateArticle = () => {
-    navigate("/create"); // 🔥 chuyển đến /create
+    navigate("/create");
   };
 
   const gotoArchivedTasks = () => {
     setActiveMenu("archived");
 
-    navigate("/archived"); // 🔥 chuyển đến /archived
+    navigate("/archived");
   };
+
+  const isActive = (path) => {
+    return location.pathname === path;
+  };
+
   return (
     <aside className="sidebar">
+      {/* Logo Header */}
       <header>
         <img src={logo} alt="logo" />
       </header>
 
-      <ul>
-        {/* Dashboard */}
-        <li>
-          <button
-            type="button"
-            className={activeMenu === "dashboard" ? "active" : ""}
-            onClick={handleGotoPage}
-          >
-            <i className="fa-solid fa-chart-line"></i>
-            <p>Dashboard</p>
-          </button>
-        </li>
+      <nav>
+        <ul>
+          {/* Dashboard */}
+          <li>
+            <button
+              type="button"
+              className={isActive("/home") ? "active" : ""}
+              onClick={handleGotoPage}
+            >
+              <i className="fa-solid fa-chart-line"></i>
+              <p>Dashboard</p>
+            </button>
+          </li>
 
-        {/* Create */}
-        <li>
-          <button
-            type="button"
-            className={activeMenu === "create" ? "active" : ""}
-            onClick={() => handleMainClick("create")}
-          >
-            <i className="fa-solid fa-arrow-up-right-from-square"></i>
-            <p>Create</p>
-            <i className="ai-chevron-down-small"></i>
-          </button>
+          {/* Create */}
+          <li>
+            <button
+              type="button"
+              className={
+                activeMenu === "create" || isActive("/create") ? "active" : ""
+              }
+              onClick={() => handleMainClick("create")}
+            >
+              <i className="fa-solid fa-plus-circle"></i>
+              <p>Create</p>
+              <i
+                className={`fa-solid fa-chevron-down ${
+                  activeMenu === "create" ? "rotate" : ""
+                }`}
+              ></i>
+            </button>
 
-          <div
-            className="sub-menu"
-            style={{
-              height: activeMenu === "create" ? "40px" : "0px",
-              overflow: "hidden",
-              transition: "height 0.3s ease",
-            }}
-          >
-            <ul>
-              <li>
-                <button type="button" onClick={gotoCreateArticle}>
-                  Create task
-                </button>
-              </li>
-            </ul>
+            {/* Submenu */}
+            <div
+              className="sub-menu"
+              style={{
+                height: activeMenu === "create" ? "50px" : "0px",
+              }}
+            >
+              <ul>
+                <li>
+                  <button
+                    type="button"
+                    onClick={gotoCreateArticle}
+                    className={isActive("/create") ? "active" : ""}
+                  >
+                    <p>Create Task</p>
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </li>
+
+          {/* Archived */}
+          <li>
+            <button
+              type="button"
+              className={isActive("/archived") ? "active" : ""}
+              onClick={gotoArchivedTasks}
+            >
+              <i className="fa-solid fa-box-archive"></i>
+              <p>Archived</p>
+            </button>
+          </li>
+        </ul>
+      </nav>
+
+      {/* Footer */}
+      <footer>
+        <div className="user-section">
+          <div className="user-info">
+            <div className="user-avatar">U</div>
+            <div className="user-details">
+              <p className="user-name">{user?.username}</p>
+              <p className="user-email">user@tempo.com</p>
+            </div>
           </div>
-        </li>
-        {/* Archived */}
-        <li>
-          <button
-            type="button"
-            className={activeMenu === "archived" ? "active" : ""}
-            onClick={gotoArchivedTasks}
-          >
-            <i className="fa-solid fa-box-archive"></i>
-            <p>Archived</p>
-            <i className="ai-chevron-down-small"></i>
+          <button className="logout-btn">
+            <i className="fa-solid fa-right-from-bracket"></i>
+            <p>Logout</p>
           </button>
-        </li>
-      </ul>
+        </div>
+      </footer>
     </aside>
   );
 }

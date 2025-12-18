@@ -1,0 +1,12 @@
+const API_URL = "http://localhost:3000/api/subtasks";
+export async function createSubtask(todoId, subtaskData) {
+  const response = await fetch(`${API_URL}/${todoId}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(subtaskData),
+    credentials: "include",
+  });
+    return response.json();
+}

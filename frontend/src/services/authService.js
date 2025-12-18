@@ -36,7 +36,7 @@ export async function checkLogin() {
 
   return {
     loggedIn: data.valid,
-    user: { userId: data.userId },
+    user: { userId: data.userId, username: data.username},
   };
 }
 

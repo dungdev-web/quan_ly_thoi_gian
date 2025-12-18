@@ -41,7 +41,10 @@ const TodoController = {
   update: async (req, res) => {
     try {
       const id = Number(req.params.id);
-      const todo = await TodoService.updateTodo(id, req.body);
+      const { title, description,status, startTime, endTime, dueDate } = req.body;
+
+      const data = { title, description,status, startTime, endTime, dueDate };
+      const todo = await TodoService.updateTodo(id, data);
       res.json(todo);
     } catch (err) {
       res.status(500).json({ error: err.message });
