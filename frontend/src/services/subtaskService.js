@@ -1,6 +1,6 @@
-const API_URL = "http://localhost:3000/api/subtasks";
+const API_URL = "http://localhost:5000/api/subtasks";
 export async function createSubtask(todoId, subtaskData) {
-  const response = await fetch(`${API_URL}/${todoId}`, {
+  const response = await fetch(`${API_URL}/sub/${todoId}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -9,4 +9,11 @@ export async function createSubtask(todoId, subtaskData) {
     credentials: "include",
   });
     return response.json();
+}
+export async function deleteSubtask(subtaskId) {
+  const response = await fetch(`${API_URL}/${subtaskId}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+  return response.json();
 }

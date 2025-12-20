@@ -37,7 +37,9 @@ const UserService = {
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     const updatedUser = await UserRepository.updatePassword(user.id, hashedPassword);
     return updatedUser;
-  }
+  },
+ 
+
 };
 
 export default UserService;

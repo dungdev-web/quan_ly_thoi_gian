@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { SartLog, StopLog, getRunningLog } from "../services/timeslogService";
+import { createSubtask, deleteSubtask } from "../services/subtaskService";
 
 export default function SubtaskModal({ task, onClose, onArchive, onUpdate }) {
   const [isRunning, setIsRunning] = useState(false);
@@ -10,6 +11,65 @@ export default function SubtaskModal({ task, onClose, onArchive, onUpdate }) {
   const [editingDescription, setEditingDescription] = useState(false);
   const [descriptionValue, setDescriptionValue] = useState("");
   const [currentTask, setCurrentTask] = useState(task);
+  const [newSubtaskTitle, setNewSubtaskTitle] = useState("");
+  const [creatingSubtask, setCreatingSubtask] = useState(false);
+  const [showSubtaskForm, setShowSubtaskForm] = useState(false);
+
+  const handleCreateSubtask = async () => {
+    if (!newSubtaskTitle.trim()) {
+      alert("Tên subtask không được để trống");
+      return;
+    }
+
+    try {
+      setCreatingSubtask(true);
+
+      const newSubtask = await createSubtask(task.id, {
+        title: newSubtaskTitle,
+      });
+
+      // ✅ update UI ngay
+      setCurrentTask((prev) => ({
+        ...prev,
+        subtasks: [...(prev.subtasks || []), newSubtask],
+      }));
+
+      setNewSubtaskTitle("");
+      setShowSubtaskForm(false);
+    } catch (err) {
+      console.error("Create subtask error:", err);
+      alert(err.message || "Không thể tạo subtask");
+    } finally {
+      setCreatingSubtask(false);
+    }
+  };
+
+  const handleDeleteSubtask = async (subtaskId) => {
+    try {
+      // Gọi API delete nếu có
+      await deleteSubtask(subtaskId);
+
+      // ✅ Cập nhật UI ngay
+      setCurrentTask((prev) => ({
+        ...prev,
+        subtasks: prev.subtasks.filter((s) => s.id !== subtaskId),
+      }));
+    } catch (err) {
+      console.error("Delete subtask error:", err);
+      alert(err.message || "Không thể xóa subtask");
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleCreateSubtask();
+    }
+    if (e.key === "Escape") {
+      setShowSubtaskForm(false);
+      setNewSubtaskTitle("");
+    }
+  };
 
   const handleArchive = async () => {
     try {
@@ -43,7 +103,6 @@ export default function SubtaskModal({ task, onClose, onArchive, onUpdate }) {
 
   const handleEditClick = (field, currentValue) => {
     setEditingField(field);
-    // Convert to datetime-local format
     if (currentValue) {
       const date = new Date(currentValue);
       const localDatetime = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
@@ -65,7 +124,7 @@ export default function SubtaskModal({ task, onClose, onArchive, onUpdate }) {
       const updateData = {
         [editingField]: new Date(editValue).toISOString(),
       };
-      
+
       const updatedTask = await onUpdate(task.id, updateData);
       setCurrentTask({ ...currentTask, ...updateData });
       setEditingField(null);
@@ -347,7 +406,7 @@ export default function SubtaskModal({ task, onClose, onArchive, onUpdate }) {
               )}
             </div>
           )}
-          
+
           {/* Add Description Button */}
           {!currentTask.description && !editingDescription && (
             <button
@@ -359,23 +418,103 @@ export default function SubtaskModal({ task, onClose, onArchive, onUpdate }) {
             </button>
           )}
 
-          {/* Subtasks Section */}
+          {/* Subtasks Section - Enhanced */}
           <div className="mb-6">
             <h3 className="text-xs font-bold text-gray-700 mb-4 flex items-center uppercase tracking-wide">
               <i className="fa-solid fa-list-check mr-2"></i>
               Subtasks ({currentTask.subtasks?.length || 0})
             </h3>
+
+            {/* Create Subtask Form */}
+            {!showSubtaskForm ? (
+              <button
+                onClick={() => setShowSubtaskForm(true)}
+                className="w-full mb-4 px-6 py-4 flex items-center justify-center gap-3 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300 hover:border-gray-400 text-gray-600 hover:text-gray-900 transition-all group"
+              >
+                <div className="w-10 h-10 rounded-full bg-gray-200 group-hover:bg-gray-300 flex items-center justify-center transition-all">
+                  <i className="fa-solid fa-plus text-gray-700"></i>
+                </div>
+                <span className="font-semibold text-sm">Thêm subtask mới</span>
+              </button>
+            ) : (
+              <div className="bg-white rounded-xl border-2 border-gray-900 p-4 mb-4 space-y-3">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <i className="fa-solid fa-list-check text-white text-sm"></i>
+                  </div>
+                  <div className="flex-1">
+                    <label className="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-wide">
+                      Tên subtask
+                    </label>
+                    <textarea
+                      value={newSubtaskTitle}
+                      onChange={(e) => setNewSubtaskTitle(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                      placeholder="Nhập tên công việc con... (Enter để tạo, Esc để hủy)"
+                      rows={2}
+                      autoFocus
+                      className="w-full px-3 py-2 text-sm border-2 border-gray-300 rounded-lg focus:outline-none focus:border-gray-900 focus:ring-2 focus:ring-gray-900 focus:ring-opacity-20 resize-none transition-all placeholder-gray-400"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex gap-2 pt-1">
+                  <button
+                    onClick={handleCreateSubtask}
+                    disabled={creatingSubtask || !newSubtaskTitle.trim()}
+                    className={`flex-1 px-4 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 text-sm transition-all ${
+                      creatingSubtask || !newSubtaskTitle.trim()
+                        ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                        : "bg-gradient-to-r from-gray-900 to-gray-800 text-white hover:from-gray-800 hover:to-black active:scale-95"
+                    }`}
+                  >
+                    {creatingSubtask ? (
+                      <>
+                        <i className="fa-solid fa-spinner animate-spin"></i>
+                        Đang tạo...
+                      </>
+                    ) : (
+                      <>
+                        <i className="fa-solid fa-check"></i>
+                        Tạo
+                      </>
+                    )}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowSubtaskForm(false);
+                      setNewSubtaskTitle("");
+                    }}
+                    disabled={creatingSubtask}
+                    className="flex-1 px-4 py-2 rounded-lg font-semibold bg-gray-200 text-gray-700 hover:bg-gray-300 transition-all text-sm disabled:opacity-50"
+                  >
+                    Hủy
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Subtasks List */}
             {currentTask.subtasks?.length > 0 ? (
-              <ul className="space-y-2 overflow-y-auto h-[140px]">
+              <ul className="space-y-2 overflow-y-auto max-h-[180px] pr-2">
                 {currentTask.subtasks.map((s, index) => (
                   <li
                     key={s.id}
-                    className="bg-white rounded-xl p-4 text-gray-800 text-sm border-2 border-gray-200 flex items-start hover:border-gray-400 hover:shadow-md transition-all group"
+                    className="bg-white rounded-xl p-4 text-gray-800 text-sm border-2 border-gray-200 hover:border-gray-400 hover:shadow-md transition-all group flex items-start justify-between"
                   >
-                    <span className="flex-shrink-0 w-7 h-7 rounded-full bg-gray-900 text-white text-xs font-bold flex items-center justify-center mr-3 group-hover:scale-110 transition-transform">
-                      {index + 1}
-                    </span>
-                    <span className="flex-1 pt-1">{s.title}</span>
+                    <div className="flex items-start flex-1 gap-3">
+                      <span className="flex-shrink-0 w-7 h-7 rounded-full bg-gray-900 text-white text-xs font-bold flex items-center justify-center group-hover:scale-110 transition-transform">
+                        {index + 1}
+                      </span>
+                      <span className="flex-1 pt-0.5 break-words">{s.title}</span>
+                    </div>
+                    <button
+                      onClick={() => handleDeleteSubtask(s.id)}
+                      className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-100 hover:bg-red-100 text-gray-400 hover:text-red-600 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 ml-2"
+                      title="Xóa subtask"
+                    >
+                      <i className="fa-solid fa-trash text-xs"></i>
+                    </button>
                   </li>
                 ))}
               </ul>

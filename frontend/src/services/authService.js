@@ -22,7 +22,14 @@ export async function loginUser(username, password) {
   return res.json();
 }
 
-
+// 🔓 Đăng xuất người dùng
+export async function logoutUser() {
+  const res = await fetch(`${API_URL}/logout`, {
+    method: "POST",
+    credentials: "include",
+  });
+  return res.json();
+}
 
 // 🧭 Lấy token hiện tại
 export async function checkLogin() {
