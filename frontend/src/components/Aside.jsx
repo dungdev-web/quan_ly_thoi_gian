@@ -1,13 +1,21 @@
 import React, { useState,useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import logo from "../Tempo-removebg-preview.png";
-// import "./Aside.css"; // Import CSS file
+import { logoutUser } from "../services/authService";
 import { checkLogin } from "../services/authService";
 export default function Aside() {
   const [activeMenu, setActiveMenu] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
   const [user, setUser] = useState(null);
+  const logout = async () => {
+    try {
+      await logoutUser();
+      navigate("/login");
+    } catch (err) {
+      console.error("Logout failed", err);
+    }
+  };
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -128,7 +136,7 @@ export default function Aside() {
               <p className="user-email">user@tempo.com</p>
             </div>
           </div>
-          <button className="logout-btn">
+          <button onClick={logout} className="logout-btn">
             <i className="fa-solid fa-right-from-bracket"></i>
             <p>Logout</p>
           </button>

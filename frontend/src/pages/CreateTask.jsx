@@ -19,6 +19,21 @@ export default function CreateTask() {
 
   const sortedTodos = [...todos].sort((a, b) => a.position - b.position);
 
+  // Hàm kiểm tra status deadline
+  const getDeadlineStatus = (dueDate, status) => {
+    if (!dueDate || status === "done") return null;
+
+    const now = new Date();
+    const due = new Date(dueDate);
+    const timeDiff = due.getTime() - now.getTime();
+    const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+
+    if (daysDiff < 0) return "overdue"; // Quá hạn
+    if (daysDiff === 0) return "today"; // Hôm nay
+    if (daysDiff <= 3) return "urgent"; // Sắp tới (3 ngày)
+    return null;
+  };
+
   const fetchTodos = async () => {
     try {
       const data = await getTodos();
@@ -43,6 +58,20 @@ export default function CreateTask() {
     } catch (err) {
       alert(err.message || "Lỗi archive task");
     }
+  };
+
+  const handleUpdateTask = async (taskId, data) => {
+    const updatedTask = await update(taskId, data);
+
+    setTodos(prev =>
+      prev.map(t =>
+        t.id === taskId
+          ? { ...t, ...updatedTask }
+          : t
+      )
+    );
+
+    return updatedTask;
   };
 
   async function onDragEnd(result) {
@@ -192,62 +221,103 @@ export default function CreateTask() {
                       <div className="space-y-3">
                         {sortedTodos
                           .filter((t) => t.status === column.id)
-                          .map((task, index) => (
-                            <Draggable
-                              key={task.id}
-                              draggableId={task.id.toString()}
-                              index={index}
-                            >
-                              {(provided, snapshot) => (
-                                <div
-                                  ref={provided.innerRef}
-                                  {...provided.draggableProps}
-                                  {...provided.dragHandleProps}
-                                  onClick={() => setOpenTask(task)}
-                                  className={`bg-white rounded-xl p-4 shadow-md hover:shadow-xl transition-all cursor-pointer border-2 border-gray-200 hover:border-gray-400 group ${
-                                    snapshot.isDragging
-                                      ? "ring-2 ring-gray-400 shadow-2xl rotate-2"
-                                      : ""
-                                  }`}
-                                >
-                                  <div className="flex items-start justify-between gap-3">
-                                    <div className="flex-1 min-w-0">
-                                      <h3 className="font-semibold text-gray-900 mb-2 truncate">
-                                        {task.title}
-                                      </h3>
-                                      {task.description && (
-                                        <p className="text-sm text-gray-600 line-clamp-2 mb-3">
-                                          {task.description}
-                                        </p>
-                                      )}
-                                      {task.dueDate && (
-                                        <div className="flex items-center gap-2 text-xs text-gray-500">
-                                          <i className="fa-solid fa-calendar"></i>
-                                          <span>
-                                            {new Date(task.dueDate).toLocaleDateString("vi-VN")}
-                                          </span>
-                                        </div>
-                                      )}
+                          .map((task, index) => {
+                            const deadlineStatus = getDeadlineStatus(task.dueDate, task.status);
+                            
+                            return (
+                              <Draggable
+                                key={task.id}
+                                draggableId={task.id.toString()}
+                                index={index}
+                              >
+                                {(provided, snapshot) => (
+                                  <div
+                                    ref={provided.innerRef}
+                                    {...provided.draggableProps}
+                                    {...provided.dragHandleProps}
+                                    onClick={() => setOpenTask(task)}
+                                    className={`bg-white rounded-xl p-4 shadow-md hover:shadow-xl transition-all cursor-pointer border-2 group ${
+                                      deadlineStatus === "overdue"
+                                        ? "border-red-600 bg-red-50 ring-2 ring-red-400"
+                                        : deadlineStatus === "today"
+                                        ? "border-orange-500 bg-orange-50 ring-2 ring-orange-400"
+                                        : deadlineStatus === "urgent"
+                                        ? "border-yellow-500 bg-yellow-50"
+                                        : "border-gray-200 hover:border-gray-400"
+                                    } ${
+                                      snapshot.isDragging
+                                        ? "ring-2 ring-gray-400 shadow-2xl rotate-2"
+                                        : ""
+                                    }`}
+                                  >
+                                    <div className="flex items-start justify-between gap-3">
+                                      <div className="flex-1 min-w-0">
+                                        <h3 className={`font-semibold mb-2 truncate ${
+                                          deadlineStatus === "overdue" || deadlineStatus === "today"
+                                            ? "text-red-700"
+                                            : deadlineStatus === "urgent"
+                                            ? "text-orange-700"
+                                            : "text-gray-900"
+                                        }`}>
+                                          {task.title}
+                                        </h3>
+                                        {task.description && (
+                                          <p className="text-sm text-gray-600 line-clamp-2 mb-3">
+                                            {task.description}
+                                          </p>
+                                        )}
+                                        {task.dueDate && (
+                                          <div className={`flex items-center gap-2 text-xs font-semibold ${
+                                            deadlineStatus === "overdue"
+                                              ? "text-red-600"
+                                              : deadlineStatus === "today"
+                                              ? "text-orange-600"
+                                              : deadlineStatus === "urgent"
+                                              ? "text-yellow-600"
+                                              : "text-gray-500"
+                                          }`}>
+                                            <i className="fa-solid fa-calendar"></i>
+                                            <span>
+                                              {new Date(task.dueDate).toLocaleDateString("vi-VN")}
+                                            </span>
+                                            {deadlineStatus === "overdue" && (
+                                              <span className="ml-1 px-2 py-0.5 bg-red-600 text-white text-xs rounded-full">
+                                                OVERDUE
+                                              </span>
+                                            )}
+                                            {deadlineStatus === "today" && (
+                                              <span className="ml-1 px-2 py-0.5 bg-orange-600 text-white text-xs rounded-full">
+                                                TODAY
+                                              </span>
+                                            )}
+                                            {deadlineStatus === "urgent" && (
+                                              <span className="ml-1 px-2 py-0.5 bg-yellow-600 text-white text-xs rounded-full">
+                                                SOON
+                                              </span>
+                                            )}
+                                          </div>
+                                        )}
+                                      </div>
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleDelete(task.id);
+                                        }}
+                                        className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-600 flex-shrink-0"
+                                      >
+                                        <i className="fa-solid fa-trash text-sm"></i>
+                                      </button>
                                     </div>
-                                    <button
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleDelete(task.id);
-                                      }}
-                                      className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-600 flex-shrink-0"
-                                    >
-                                      <i className="fa-solid fa-trash text-sm"></i>
-                                    </button>
-                                  </div>
 
-                                  {/* Drag Handle Indicator */}
-                                  <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-center">
-                                    <div className="w-12 h-1 bg-gray-200 rounded-full group-hover:bg-gray-400 transition-colors"></div>
+                                    {/* Drag Handle Indicator */}
+                                    <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-center">
+                                      <div className="w-12 h-1 bg-gray-200 rounded-full group-hover:bg-gray-400 transition-colors"></div>
+                                    </div>
                                   </div>
-                                </div>
-                              )}
-                            </Draggable>
-                          ))}
+                                )}
+                              </Draggable>
+                            );
+                          })}
                         {provided.placeholder}
                       </div>
 
@@ -273,7 +343,7 @@ export default function CreateTask() {
           task={openTask}
           onClose={() => setOpenTask(null)}
           onArchive={handleArchiveTodo}
-          onUpdate={update}
+          onUpdate={handleUpdateTask}
         />
       )}
       {openCreateModal && (

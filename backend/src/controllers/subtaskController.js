@@ -36,15 +36,19 @@ const SubtaskController = {
   },
 
   delete: async (req, res) => {
-    try {
-      const id = Number(req.params.id);
-      const userId = req.userId;
-      await SubtaskService.deleteSubtask(userId, id);
-      res.status(204).send();
-    } catch (err) {
-      res.status(400).json({ error: err.message });
-    }
-  },
+  try {
+    const id = Number(req.params.id);
+    const userId = req.userId;
+
+    await SubtaskService.deleteSubtask(userId, id);
+
+    // ✅ trả JSON
+    res.json({ success: true });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+},
+
 };
 
 export default SubtaskController;
