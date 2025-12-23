@@ -77,7 +77,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-white ml-64">
+    <div className="min-h-screen bg-white ">
       {/* Header */}
       <div className="bg-gradient-to-r from-gray-900 via-black to-gray-900 shadow-lg">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-8">

@@ -1,5 +1,5 @@
 import { checkLogin } from "./authService"; // ✅ Lấy danh sách todos (cookie tự gửi theo request)
-const API_URL = "http://localhost:5000/api/todos";
+const API_URL = process.env.REACT_APP_API_URL+"/todos";
 export async function getTodos() {
   const { loggedIn, user } = await checkLogin();
   if (!loggedIn) throw new Error("Not logged in");

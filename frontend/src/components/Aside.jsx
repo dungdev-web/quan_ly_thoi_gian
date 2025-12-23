@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import logo from "../Tempo-removebg-preview.png";
 import { logoutUser } from "../services/authService";
@@ -8,6 +8,8 @@ export default function Aside() {
   const navigate = useNavigate();
   const location = useLocation();
   const [user, setUser] = useState(null);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
   const logout = async () => {
     try {
       await logoutUser();
@@ -39,6 +41,8 @@ export default function Aside() {
   };
 
   const gotoCreateArticle = () => {
+    setActiveMenu("create");
+
     navigate("/create");
   };
 
@@ -53,10 +57,23 @@ export default function Aside() {
   };
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${isCollapsed ? "collapsed" : ""}`}>
       {/* Logo Header */}
-      <header>
-        <img src={logo} alt="logo" />
+      <header className="sidebar-header ">
+        <div className="logo-wrapper flex flex-col items-center justify-center p-9">
+          <div>
+          <img src={logo} alt="logo" className="logo-full" />
+
+          <div className="logo-mark">S</div>
+          </div>
+        <button
+          className="toggle-btn"
+          onClick={() => setIsCollapsed(!isCollapsed)}
+        >
+          <i className="fa-solid fa-bars"></i>
+        </button>
+        </div>
+
       </header>
 
       <nav>
@@ -77,22 +94,20 @@ export default function Aside() {
           <li>
             <button
               type="button"
-              className={
-                activeMenu === "create" || isActive("/create") ? "active" : ""
-              }
-              onClick={() => handleMainClick("create")}
+             className={isActive("/create") ? "active" : ""}
+              onClick={gotoCreateArticle}
             >
               <i className="fa-solid fa-plus-circle"></i>
               <p>Create</p>
-              <i
+              {/* <i
                 className={`fa-solid fa-chevron-down ${
                   activeMenu === "create" ? "rotate" : ""
                 }`}
-              ></i>
+              ></i> */}
             </button>
 
             {/* Submenu */}
-            <div
+            {/* <div
               className="sub-menu"
               style={{
                 height: activeMenu === "create" ? "50px" : "0px",
@@ -109,7 +124,7 @@ export default function Aside() {
                   </button>
                 </li>
               </ul>
-            </div>
+            </div> */}
           </li>
 
           {/* Archived */}
@@ -130,9 +145,12 @@ export default function Aside() {
       <footer>
         <div className="user-section">
           <div className="user-info">
-            <div className="user-avatar">U</div>
+            <div className="user-avatar">
+              {" "}
+              {user?.username?.charAt(0).toUpperCase()}
+            </div>
             <div className="user-details">
-              <p className="user-name">{user?.username}</p>
+              <p className="user-name"> {user?.username}</p>
               <p className="user-email">user@tempo.com</p>
             </div>
           </div>

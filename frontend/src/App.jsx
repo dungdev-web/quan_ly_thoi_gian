@@ -1,23 +1,21 @@
-import React from "react";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
-import { isLoggedIn } from "./services/authService";
-import { useState, useEffect } from "react";
-import Loader from "./components/Loader";
-import Aside from "./components/Aside";
 import CreateTask from "./pages/CreateTask";
 import ListTask from "./pages/List";
-function PrivateRoute({ children, auth }) {
-  if (!auth) return <Navigate to="/login" replace />;
-  return children;
-}
+import Loader from "./components/Loader";
+import MainLayout from "./components/MainLayout";
+import { isLoggedIn } from "./services/authService";
+import { useState, useEffect } from "react";
+// function PrivateRoute({ auth, children }) {
+//   if (!auth) return <Navigate to="/login" replace />;
+//   return children;
+// }
 
 function AppContent() {
   const [auth, setAuth] = useState(null);
   const [loading, setLoading] = useState(true);
-  const location = useLocation();
 
   useEffect(() => {
     const check = async () => {
@@ -30,50 +28,29 @@ function AppContent() {
 
   if (loading) return <Loader />;
 
-  const hideSidebar = location.pathname === "/login" || location.pathname === "/register";
-
   return (
-    <>
-      {!hideSidebar && auth && <Aside />}
+    <Routes>
+      {/* redirect root */}
+      <Route path="/" element={<Navigate to="/home" />} />
 
-      <Routes>
-        <Route path="/" element={<Navigate to="/home" />} />
+      {/* public */}
+      <Route path="/login" element={<Login setAuth={setAuth} />} />
+      <Route path="/register" element={<Register />} />
 
-        {/* public routes */}
-        <Route path="/login" element={<Login setAuth={setAuth} />} />
-        <Route path="/register" element={<Register />} />
+      {/* private layout */}
+      <Route
+        element={
+          auth ? <MainLayout /> : <Navigate to="/login" replace />
+        }
+      >
+        <Route path="/home" element={<Home />} />
+        <Route path="/create" element={<CreateTask />} />
+        <Route path="/archived" element={<ListTask />} />
+      </Route>
 
-        {/* private routes */}
-        <Route
-          path="/home"
-          element={
-            <PrivateRoute auth={auth}>
-              <Home />
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/create"
-          element={
-            <PrivateRoute auth={auth}>
-              <CreateTask />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/archived"
-          element={
-            <PrivateRoute auth={auth}>
-              <ListTask />
-            </PrivateRoute>
-          }
-        />
-
-        {/* catch all → login */}
-        <Route path="*" element={<Navigate to="/login" />} />
-      </Routes>
-    </>
+      {/* catch all */}
+      <Route path="*" element={<Navigate to="/login" />} />
+    </Routes>
   );
 }
 

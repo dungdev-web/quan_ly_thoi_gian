@@ -1,7 +1,7 @@
 import UserRepository from "../repositories/authRespository.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-const JWT_SECRET = process.env.JWT_SECRET;
+// const process.env.JWT_SECRET = process.env.process.env.JWT_SECRET;
 
 const UserService = {
   register: async (username, password) => {
@@ -20,13 +20,13 @@ const UserService = {
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) throw new Error("Invalid username or password");
 
-    const token = jwt.sign({ userId: user.id,username:user.username }, JWT_SECRET, { expiresIn: "1d" });
+    const token = jwt.sign({ userId: user.id,username:user.username }, process.env.JWT_SECRET, { expiresIn: "1d" });
     return { user, token };
   },
 
   verifyToken: (token) => {
     try {
-      return jwt.verify(token, JWT_SECRET);
+      return jwt.verify(token, process.env.JWT_SECRET);
     } catch {
       return null;
     }
