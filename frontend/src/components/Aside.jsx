@@ -36,9 +36,9 @@ export default function Aside() {
     navigate("/home");
   };
 
-  const handleMainClick = (key) => {
-    setActiveMenu((prev) => (prev === key ? null : key));
-  };
+  // const handleMainClick = (key) => {
+  //   setActiveMenu((prev) => (prev === key ? null : key));
+  // };
 
   const gotoCreateArticle = () => {
     setActiveMenu("create");

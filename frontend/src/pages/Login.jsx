@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { loginUser } from "../services/authService";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import image from "../tl.webp";
 import logo from "../Tempo-removebg-preview.png";
 import baner1 from "../baner1.png";
@@ -56,7 +57,7 @@ export default function Login({ setAuth }) {
     }, speed);
 
     return () => clearTimeout(typing);
-  }, [text, isDeleting, index]);
+  }, [text, isDeleting, index,words]);
 
   return (
     <div>
@@ -91,7 +92,7 @@ export default function Login({ setAuth }) {
         </div>
         <div className="card">
           <div className="content">
-            <img src={logo} className="logo" />
+            <img src={logo} className="logo"  alt="Logo ứng dụng" />
             <h2>Login</h2>
             <h3>Please enter your credentials</h3>
             <form onSubmit={handleSubmit}>
@@ -116,17 +117,17 @@ export default function Login({ setAuth }) {
                   />{" "}
                   <label>Remember me</label>
                 </div>
-                <a href="#">Forgot password?</a>
+                <Link href="/forgot-password">Forgot password?</Link>
               </div>
               <button type="submit">Login</button>
             </form>
             <p className="have">
-              Don't have an account? <a href="/register">Sign Up</a>
+              Don't have an account? <Link href="/register">Sign Up</Link>
             </p>
           </div>
           <div className="hero">
-            <img src="logo-white.svg" className="logo-white" />
-            <img src={baner1} className="graphic" />
+            <img src="logo-white.svg"  alt="Logo ứng dụng" className="logo-white" />
+            <img src={baner1 }  alt="Logo ứng dụng" className="graphic" />
           </div>
         </div>
       </div>

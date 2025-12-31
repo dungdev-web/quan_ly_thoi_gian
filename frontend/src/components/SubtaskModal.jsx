@@ -125,7 +125,7 @@ export default function SubtaskModal({ task, onClose, onArchive, onUpdate }) {
         [editingField]: new Date(editValue).toISOString(),
       };
 
-      const updatedTask = await onUpdate(task.id, updateData);
+      // const updatedTask = await onUpdate(task.id, updateData);
       setCurrentTask({ ...currentTask, ...updateData });
       setEditingField(null);
       setEditValue("");

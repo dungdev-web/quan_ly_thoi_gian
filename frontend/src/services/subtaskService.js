@@ -1,4 +1,4 @@
-const API_URL = process.env.REACT_APP_API_URL+"/subtasks";
+const API_URL = process.env.REACT_APP_API_URL+"/api/subtasks";
 export async function createSubtask(todoId, subtaskData) {
   const response = await fetch(`${API_URL}/sub/${todoId}`, {
     method: "POST",

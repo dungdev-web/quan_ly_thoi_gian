@@ -1,4 +1,4 @@
-const API_URL = process.env.REACT_APP_API_URL+"/time-logs";
+const API_URL = process.env.REACT_APP_API_URL+"/api/time-logs";
 export async function getTodayLog() {
   const response = await fetch(`${API_URL}/today`, {
     method: "GET",
