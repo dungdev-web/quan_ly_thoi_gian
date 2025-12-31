@@ -7,7 +7,7 @@ import subtaskRoutes from "./src/routes/subtaskRoutes.js";
 import timeLogRoutes from "./src/routes/timeLog.routes.js";
 import cookieParser from "cookie-parser";
 const PORT = process.env.PORT || 3000;
-
+const API_URL = process.env.REACT_APP_API_URL;
 dotenv.config();
 
 const app = express();
@@ -22,7 +22,7 @@ app.use(cookieParser());
 // 3️⃣ CORS phải đặt sau express.json và cookieParser
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: API_URL,
     credentials: true,
   })
 );
