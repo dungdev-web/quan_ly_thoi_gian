@@ -6,6 +6,7 @@ import todoRoutes from "./src/routes/todoRoutes.js";
 import subtaskRoutes from "./src/routes/subtaskRoutes.js";
 import timeLogRoutes from "./src/routes/timeLog.routes.js";
 import cookieParser from "cookie-parser";
+const PORT = process.env.PORT || 3000;
 
 dotenv.config();
 
@@ -32,4 +33,6 @@ app.use("/api/todos", todoRoutes);
 app.use("/api/subtasks", subtaskRoutes);  // ❗ Đã sửa
 app.use("/api/time-logs", timeLogRoutes);
 // 5️⃣ Start server
-app.listen(5000, () => console.log("🚀 Server running on port 5000"));
+app.listen(PORT, () => {
+  console.log("Server running on port", PORT);
+});
