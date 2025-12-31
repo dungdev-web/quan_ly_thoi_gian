@@ -7,6 +7,8 @@ import authRoutes from "./src/routes/authRoutes.js";
 import todoRoutes from "./src/routes/todoRoutes.js";
 import subtaskRoutes from "./src/routes/subtaskRoutes.js";
 import timeLogRoutes from "./src/routes/timeLog.routes.js";
+const datbase_url = process.env.DATABASE_URL
+console.log(datbase_url);
 
 // 1️⃣ LOAD ENV TRƯỚC TIÊN
 dotenv.config();
