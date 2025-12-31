@@ -1,4 +1,4 @@
-import UserService from '../services/authService.js';
+import UserService from "../services/authService.js";
 
 const UserController = {
   register: async (req, res) => {
@@ -15,13 +15,14 @@ const UserController = {
     try {
       const { username, password } = req.body;
       const { user, token } = await UserService.login(username, password);
-       res.cookie("token", token, {
-        httpOnly: true,        
-        secure: false,      
-        sameSite: "lax",
-        maxAge: 24 * 60 * 60 * 1000 
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: true, // ✅ BẮT BUỘC HTTPS
+        sameSite: "none", // ✅ BẮT BUỘC cross-domain
+        maxAge: 24 * 60 * 60 * 1000,
       });
-      res.json({ id: user.id, username: user.username,success: true });
+
+      res.json({ id: user.id, username: user.username, success: true });
     } catch (err) {
       res.status(400).json({ error: err.message });
     }
@@ -30,7 +31,11 @@ const UserController = {
     const token = req.cookies.token;
     const payload = UserService.verifyToken(token);
     if (payload) {
-      res.json({ valid: true, userId: payload.userId, username: payload.username });
+      res.json({
+        valid: true,
+        userId: payload.userId,
+        username: payload.username,
+      });
     } else {
       res.status(401).json({ valid: false, error: "Invalid token" });
     }
@@ -38,7 +43,10 @@ const UserController = {
   forgotPassword: async (req, res) => {
     try {
       const { username, newPassword } = req.body;
-      const updatedUser = await UserService.forgotPassword(username, newPassword);
+      const updatedUser = await UserService.forgotPassword(
+        username,
+        newPassword
+      );
       res.json({ id: updatedUser.id, username: updatedUser.username });
     } catch (err) {
       res.status(400).json({ error: err.message });
@@ -46,13 +54,13 @@ const UserController = {
   },
   logout: async (req, res) => {
     try {
-     res.clearCookie("token", {
-    httpOnly: true,
-    sameSite: "strict",
-    secure: process.env.NODE_ENV === "production",
-  });
+      res.clearCookie("token", {
+        httpOnly: true,
+        sameSite: "strict",
+        secure: process.env.NODE_ENV === "production",
+      });
 
-  return res.status(200).json({ message: "Logout successful" });
+      return res.status(200).json({ message: "Logout successful" });
     } catch (err) {
       res.status(400).json({ error: err.message });
     }
