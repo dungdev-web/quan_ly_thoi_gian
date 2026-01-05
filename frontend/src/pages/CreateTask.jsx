@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   getTodos,
   addTodo,
@@ -17,7 +17,9 @@ export default function CreateTask() {
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [openTask, setOpenTask] = useState(null);
 
-  const sortedTodos = [...todos].sort((a, b) => a.position - b.position);
+  const sortedTodos = useMemo(() => {
+    return [...todos].sort((a, b) => a.position - b.position);
+  }, [todos]);
 
   // Hàm kiểm tra status deadline
   const getDeadlineStatus = (dueDate, status) => {
@@ -63,12 +65,8 @@ export default function CreateTask() {
   const handleUpdateTask = async (taskId, data) => {
     const updatedTask = await update(taskId, data);
 
-    setTodos(prev =>
-      prev.map(t =>
-        t.id === taskId
-          ? { ...t, ...updatedTask }
-          : t
-      )
+    setTodos((prev) =>
+      prev.map((t) => (t.id === taskId ? { ...t, ...updatedTask } : t))
     );
 
     return updatedTask;
@@ -82,40 +80,47 @@ export default function CreateTask() {
     const sourceCol = source.droppableId;
     const destCol = destination.droppableId;
 
-    const sourceTasks = sortedTodos.filter((t) => t.status === sourceCol);
-    const destTasks = sortedTodos.filter((t) => t.status === destCol);
+    // Clone data hiện tại
+    let newTodos = [...sortedTodos];
 
-    if (sourceCol === destCol) {
-      const items = Array.from(sourceTasks);
-      const [moved] = items.splice(source.index, 1);
-      items.splice(destination.index, 0, moved);
+    const sourceTasks = newTodos.filter((t) => t.status === sourceCol);
+    const destTasks = newTodos.filter((t) => t.status === destCol);
 
-      await Promise.all(
-        items.map((item, index) => updatePosition(item.id, index))
-      );
+    const [moved] = sourceTasks.splice(source.index, 1);
 
-      fetchTodos();
-      return;
+    if (sourceCol !== destCol) {
+      moved.status = destCol;
     }
 
-    const newSource = Array.from(sourceTasks);
-    const [moved] = newSource.splice(source.index, 1);
+    destTasks.splice(destination.index, 0, moved);
 
-    for (let i = 0; i < newSource.length; i++) {
-      await updatePosition(newSource[i].id, i);
+    // Update position local (OPTIMISTIC UI)
+    sourceTasks.forEach((t, i) => (t.position = i));
+    destTasks.forEach((t, i) => (t.position = i));
+
+    setTodos((prev) =>
+      prev.map((t) => {
+        if (t.id === moved.id) return moved;
+        return t;
+      })
+    );
+
+    try {
+      const requests = [];
+
+      if (sourceCol !== destCol) {
+        requests.push(update(taskId, { status: destCol }));
+      }
+
+      sourceTasks.forEach((t, i) => requests.push(updatePosition(t.id, i)));
+      destTasks.forEach((t, i) => requests.push(updatePosition(t.id, i)));
+
+      // GỌI SONG SONG (KHÔNG await trong for)
+      await Promise.all(requests);
+    } catch (err) {
+      console.error("Drag failed", err);
+      fetchTodos(); // fallback nếu lỗi
     }
-
-    const newDest = Array.from(destTasks);
-    moved.status = destCol;
-    newDest.splice(destination.index, 0, moved);
-
-    await update(taskId, { status: destCol });
-
-    for (let i = 0; i < newDest.length; i++) {
-      await updatePosition(newDest[i].id, i);
-    }
-
-    fetchTodos();
   }
 
   const handleAddTask = async (data) => {
@@ -141,7 +146,11 @@ export default function CreateTask() {
 
   const columns = [
     { id: "todo", title: "📋 To Do", color: "from-gray-700 to-gray-800" },
-    { id: "In progress", title: "⚡ In Progress", color: "from-gray-800 to-gray-900" },
+    {
+      id: "In progress",
+      title: "⚡ In Progress",
+      color: "from-gray-800 to-gray-900",
+    },
     { id: "done", title: "✓ Done", color: "from-black to-gray-900" },
   ];
 
@@ -222,8 +231,11 @@ export default function CreateTask() {
                         {sortedTodos
                           .filter((t) => t.status === column.id)
                           .map((task, index) => {
-                            const deadlineStatus = getDeadlineStatus(task.dueDate, task.status);
-                            
+                            const deadlineStatus = getDeadlineStatus(
+                              task.dueDate,
+                              task.status
+                            );
+
                             return (
                               <Draggable
                                 key={task.id}
@@ -252,13 +264,16 @@ export default function CreateTask() {
                                   >
                                     <div className="flex items-start justify-between gap-3">
                                       <div className="flex-1 min-w-0">
-                                        <h3 className={`font-semibold mb-2 truncate ${
-                                          deadlineStatus === "overdue" || deadlineStatus === "today"
-                                            ? "text-red-700"
-                                            : deadlineStatus === "urgent"
-                                            ? "text-orange-700"
-                                            : "text-gray-900"
-                                        }`}>
+                                        <h3
+                                          className={`font-semibold mb-2 truncate ${
+                                            deadlineStatus === "overdue" ||
+                                            deadlineStatus === "today"
+                                              ? "text-red-700"
+                                              : deadlineStatus === "urgent"
+                                              ? "text-orange-700"
+                                              : "text-gray-900"
+                                          }`}
+                                        >
                                           {task.title}
                                         </h3>
                                         {task.description && (
@@ -267,18 +282,22 @@ export default function CreateTask() {
                                           </p>
                                         )}
                                         {task.dueDate && (
-                                          <div className={`flex items-center gap-2 text-xs font-semibold ${
-                                            deadlineStatus === "overdue"
-                                              ? "text-red-600"
-                                              : deadlineStatus === "today"
-                                              ? "text-orange-600"
-                                              : deadlineStatus === "urgent"
-                                              ? "text-yellow-600"
-                                              : "text-gray-500"
-                                          }`}>
+                                          <div
+                                            className={`flex items-center gap-2 text-xs font-semibold ${
+                                              deadlineStatus === "overdue"
+                                                ? "text-red-600"
+                                                : deadlineStatus === "today"
+                                                ? "text-orange-600"
+                                                : deadlineStatus === "urgent"
+                                                ? "text-yellow-600"
+                                                : "text-gray-500"
+                                            }`}
+                                          >
                                             <i className="fa-solid fa-calendar"></i>
                                             <span>
-                                              {new Date(task.dueDate).toLocaleDateString("vi-VN")}
+                                              {new Date(
+                                                task.dueDate
+                                              ).toLocaleDateString("vi-VN")}
                                             </span>
                                             {deadlineStatus === "overdue" && (
                                               <span className="ml-1 px-2 py-0.5 bg-red-600 text-white text-xs rounded-full">
