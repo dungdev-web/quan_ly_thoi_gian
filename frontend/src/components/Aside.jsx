@@ -4,7 +4,7 @@ import logo from "../Tempo-removebg-preview.png";
 import { logoutUser } from "../services/authService";
 import { checkLogin } from "../services/authService";
 export default function Aside() {
-  const [activeMenu, setActiveMenu] = useState(null);
+  const [, setActiveMenu] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
   const [user, setUser] = useState(null);
