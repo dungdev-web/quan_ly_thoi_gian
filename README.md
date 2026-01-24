@@ -131,7 +131,7 @@ todo-app/
 ## 🔌 API Endpoints
 
 ### Todos
-- `GET /api/todos` - Lấy tất cả todos
+- `GET /api/todos/user/:userId` - Lấy tất cả todos theo user
 - `POST /api/todos` - Tạo todo mới
 - `GET /api/todos/:id` - Lấy todo theo ID
 - `PUT /api/todos/:id` - Cập nhật todo
@@ -143,8 +143,6 @@ todo-app/
 2. **Đánh dấu hoàn thành**: Click vào checkbox bên cạnh công việc
 3. **Chỉnh sửa**: Click vào icon edit để sửa nội dung
 4. **Xóa công việc**: Click vào icon delete
-5. **Lọc công việc**: Sử dụng tabs hoặc dropdown để lọc theo trạng thái
-6. **Tìm kiếm**: Sử dụng thanh search để tìm kiếm công việc
 
 ## 🚀 Scripts
 
@@ -177,11 +175,8 @@ Mọi đóng góp đều được chào đón! Để đóng góp:
 Nếu bạn phát hiện lỗi, vui lòng tạo issue mới với:
 - Mô tả chi tiết lỗi
 - Các bước tái hiện lỗi
-- Screenshots (nếu có)
-  
+- Screenshots (nếu có)  
 - Môi trường (OS, Browser, Node version)
 
-## 📝 License
 
-Project này được phân phối dưới giấy phép MIT. Xem file `LICENSE` để biết thêm chi tiết.
 
