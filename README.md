@@ -4,23 +4,23 @@
 
 ![Todo App Demo](https://cv-five-beige.vercel.app/todo.png)
 
-## ✨ Tính năng
+##  Tính năng
 
-- ➕ Thêm công việc mới với giao diện Material-UI
-- ✅ Đánh dấu hoàn thành/chưa hoàn thành
-- ✏️ Chỉnh sửa nội dung công việc
-- 🗑️ Xóa công việc không cần thiết
-- 📊 Thống kê tiến độ công việc
-- 💾 Lưu trữ dữ liệu với backend API
-- 📱 Responsive design, tương thích mọi thiết bị
-- 🎨 Giao diện đẹp mắt với Material-UI components
-- ⚡ Hiệu năng cao với React hooks và optimization
+-  Thêm công việc mới với giao diện Material-UI
+-  Đánh dấu hoàn thành/chưa hoàn thành
+-  Chỉnh sửa nội dung công việc
+-  Xóa công việc không cần thiết
+-  Thống kê tiến độ công việc
+-  Lưu trữ dữ liệu với backend API
+-  Responsive design, tương thích mọi thiết bị
+-  Giao diện đẹp mắt với Material-UI components
+-  Hiệu năng cao với React hooks và optimization
 
-## 🚀 Demo
+##  Demo
 
 [Xem demo trực tiếp tại đây](https://quan-ly-thoi-gian.vercel.app/)
 
-## 🛠️ Công nghệ sử dụng
+##  Công nghệ sử dụng
 
 ### Frontend
 - **React** (v18+) - UI Library
@@ -36,7 +36,7 @@
 - **Prisma** - ORM
 - **JWT** - Authentication
 
-## 📦 Cài đặt
+##  Cài đặt
 
 ### Yêu cầu hệ thống
 
@@ -128,7 +128,7 @@ todo-app/
 └── README.md
 ```
 
-## 🔌 API Endpoints
+##  API Endpoints
 
 ### Todos
 - `GET /api/todos/user/:userId` - Lấy tất cả todos theo user
@@ -137,14 +137,14 @@ todo-app/
 - `PUT /api/todos/:id` - Cập nhật todo
 - `DELETE /api/todos/:id` - Xóa todo
 
-## 💻 Sử dụng
+##  Sử dụng
 
 1. **Thêm công việc mới**: Click vào nút "+" hoặc "Add Task", nhập nội dung và nhấn Enter
 2. **Đánh dấu hoàn thành**: Click vào checkbox bên cạnh công việc
 3. **Chỉnh sửa**: Click vào icon edit để sửa nội dung
 4. **Xóa công việc**: Click vào icon delete
 
-## 🚀 Scripts
+##  Scripts
 
 ### Frontend
 ```bash
@@ -159,24 +159,4 @@ npm run eject      # Eject từ Create React App
 npm start          # Chạy server
 npm run dev        # Chạy với nodemon
 ```
-
-## 🤝 Đóng góp
-
-Mọi đóng góp đều được chào đón! Để đóng góp:
-
-1. Fork repository
-2. Tạo branch mới (`git checkout -b feature/AmazingFeature`)
-3. Commit thay đổi (`git commit -m 'Add some AmazingFeature'`)
-4. Push lên branch (`git push origin feature/AmazingFeature`)
-5. Tạo Pull Request
-
-## 🐛 Báo lỗi
-
-Nếu bạn phát hiện lỗi, vui lòng tạo issue mới với:
-- Mô tả chi tiết lỗi
-- Các bước tái hiện lỗi
-- Screenshots (nếu có)  
-- Môi trường (OS, Browser, Node version)
-
-
 
