@@ -1,4 +1,4 @@
-# 🚀 TempoTask: Time & Task Management Platform
+   # TempoTask: Time & Task Management Platform
 
 [![GitHub language](https://img.shields.io/github/languages/top/dungdev-web/quan_ly_thoi_gian?style=for-the-badge&color=blueviolet)](https://github.com/dungdev-web/quan_ly_thoi_gian)
 [![GitHub Stars](https://img.shields.io/github/stars/dungdev-web/quan_ly_thoi_gian?style=for-the-badge&color=gold)](https://github.com/dungdev-web/quan_ly_thoi_gian/stargazers)
@@ -10,7 +10,7 @@
 
 ---
 
-## 🌟 Live Demo
+## Live Demo
 
 Experience TempoTask in action:
 [**quan-ly-thoi-gian.vercel.app**](https://quan-ly-thoi-gian.vercel.app/)
@@ -19,37 +19,37 @@ Experience TempoTask in action:
 
 ---
 
-## 📝 Table of Contents
+## Table of Contents
 
-*   [🌟 Live Demo](#-live-demo)
-*   [📝 Table of Contents](#-table-of-contents)
-*   [✨ About TempoTask](#-about-tempotask)
+*   [Live Demo](#-live-demo)
+*   [Table of Contents](#-table-of-contents)
+*   [About TempoTask](#-about-tempotask)
     *   [Problem It Solves](#problem-it-solves)
     *   [Key Features](#key-features)
     *   [Use Cases](#use-cases)
-*   [🚀 Technologies Used](#-technologies-used)
+*   [Technologies Used](#-technologies-used)
     *   [Frontend](#frontend)
     *   [Backend](#backend)
     *   [Database](#database)
-*   [⚙️ Getting Started](#-getting-started)
+*   [Getting Started](#-getting-started)
     *   [Prerequisites](#prerequisites)
     *   [Installation](#installation)
     *   [Database Setup](#database-setup)
     *   [Environment Variables](#environment-variables)
     *   [Running the Application](#running-the-application)
-*   [📁 Project Structure](#-project-structure)
-*   [💡 API Endpoints](#-api-endpoints)
+*   [Project Structure](#-project-structure)
+*   [API Endpoints](#-api-endpoints)
     *   [Authentication](#authentication)
     *   [Tasks (Todos)](#tasks-todos)
     *   [Subtasks](#subtasks)
     *   [Time Logs](#time-logs)
-*   [🤝 How to use](#-how-to-use)
-*   [📄 License](#-license)
-*   [🙏 Acknowledgments](#-acknowledgments)
+*   [How to use](#-how-to-use)
+*   [License](#-license)
+*   [Acknowledgments](#-acknowledgments)
 
 ---
 
-## ✨ About TempoTask
+## About TempoTask
 
 TempoTask (originally named "Quản Lý Thời Gian" - Time Management) is a comprehensive task and time management solution. It's designed to streamline your workflow, ensure no task is left behind, and provide insights into how you spend your time.
 
@@ -65,17 +65,17 @@ In today's fast-paced world, managing multiple tasks, deadlines, and personal go
 
 TempoTask comes packed with features to boost your productivity:
 
-*   🔒 **User Authentication**: Secure user registration and login with JWT-based authentication.
-*   ✅ **Task Management**:
-    *   Create, view, update, and delete main tasks (todos).
-    *   Mark tasks as completed/incomplete.
-    *   Edit task content and details.
-*   ➕ **Subtask Support**: Break down complex tasks into smaller, manageable subtasks for better organization.
-*   ⏱️ **Time Logging**: Track the time spent on individual tasks and subtasks for detailed time analysis.
-*   📊 **Progress Statistics**: View overall progress and completion rates for your tasks.
-*   🎨 **Intuitive UI**: A beautiful, responsive interface built with Material-UI components for a smooth user experience.
-*   💾 **Persistent Data**: All data is securely stored and managed via a backend API and MySQL database.
-*   📱 **Responsive Design**: Enjoy a consistent experience across desktops, tablets, and mobile devices.
+*   **User Authentication**: Secure user registration and login with JWT-based authentication.
+*   **Task Management**:
+    * Create, view, update, and delete main tasks (todos).
+    * Mark tasks as completed/incomplete.
+    * Edit task content and details.
+*   **Subtask Support**: Break down complex tasks into smaller, manageable subtasks for better organization.
+*   **Time Logging**: Track the time spent on individual tasks and subtasks for detailed time analysis.
+*   **Progress Statistics**: View overall progress and completion rates for your tasks.
+*   **Intuitive UI**: A beautiful, responsive interface built with Material-UI components for a smooth user experience.
+*   **Persistent Data**: All data is securely stored and managed via a backend API and MySQL database.
+*   **Responsive Design**: Enjoy a consistent experience across desktops, tablets, and mobile devices.
 
 ### Use Cases
 
@@ -86,7 +86,7 @@ TempoTask comes packed with features to boost your productivity:
 
 ---
 
-## 🚀 Technologies Used
+## Technologies Used
 
 TempoTask leverages a modern full-stack architecture to deliver a robust and scalable application.
 
@@ -115,7 +115,7 @@ TempoTask leverages a modern full-stack architecture to deliver a robust and sca
 
 ---
 
-## ⚙️ Getting Started
+## Getting Started
 
 Follow these instructions to set up and run TempoTask on your local machine.
 
@@ -215,7 +215,7 @@ You are now ready to use TempoTask!
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 todo-app/
