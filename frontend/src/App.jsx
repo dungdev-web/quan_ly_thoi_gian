@@ -8,10 +8,7 @@ import Loader from "./components/Loader";
 import MainLayout from "./components/MainLayout";
 import { isLoggedIn } from "./services/authService";
 import { useState, useEffect } from "react";
-// function PrivateRoute({ auth, children }) {
-//   if (!auth) return <Navigate to="/login" replace />;
-//   return children;
-// }
+import { ToastProvider } from "./components/Toast";
 
 function AppContent() {
   const [auth, setAuth] = useState(null);
@@ -38,11 +35,7 @@ function AppContent() {
       <Route path="/register" element={<Register />} />
 
       {/* private layout */}
-      <Route
-        element={
-          auth ? <MainLayout /> : <Navigate to="/login" replace />
-        }
-      >
+      <Route element={auth ? <MainLayout /> : <Navigate to="/login" replace />}>
         <Route path="/home" element={<Home />} />
         <Route path="/create" element={<CreateTask />} />
         <Route path="/archived" element={<ListTask />} />
@@ -57,7 +50,9 @@ function AppContent() {
 export default function App() {
   return (
     <BrowserRouter>
-      <AppContent />
+      <ToastProvider>
+        <AppContent />
+      </ToastProvider>
     </BrowserRouter>
   );
 }

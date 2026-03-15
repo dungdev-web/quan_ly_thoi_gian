@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useToast } from "../components/Toast";
 
 export default function CreateTaskModal({ onClose, onSubmit }) {
   const [form, setForm] = useState({
@@ -8,13 +9,13 @@ export default function CreateTaskModal({ onClose, onSubmit }) {
     endTime: "",
     dueDate: "",
   });
-
+  const toast= useToast();
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = () => {
-    if (!form.title.trim()) return alert("Title is required");
+    if (!form.title.trim()) return toast("Title is required","error");
     onSubmit(form);
     onClose();
   };

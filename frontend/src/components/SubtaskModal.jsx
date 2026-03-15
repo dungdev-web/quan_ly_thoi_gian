@@ -1,7 +1,84 @@
 import { useState, useEffect } from "react";
 import { SartLog, StopLog, getRunningLog } from "../services/timeslogService";
 import { createSubtask, deleteSubtask } from "../services/subtaskService";
+const TimeCard = ({
+    field,
+    icon,
+    label,
+    value,
+    isSpecial = false,
+    editingField,
+    editValue,
+    onEditClick,
+    onEditChange,
+    onSave,
+    onCancel,
+    formatDateTime,
+  }) => {
+    const isEditing = editingField === field;
 
+    return (
+      <div
+        className={`${
+          isSpecial
+            ? "bg-gradient-to-br from-gray-900 to-black border-2 border-gray-800 col-span-2"
+            : "bg-white border-2 border-gray-200 hover:border-gray-400"
+        } rounded-xl p-5 transition-all shadow-sm group`}
+      >
+        <div
+          className={`flex items-center mb-3 ${isSpecial ? "text-gray-300" : "text-gray-700"}`}
+        >
+          <i className={`${icon} mr-2 text-lg`}></i>
+          <span className="text-xs font-bold uppercase tracking-wide">
+            {label}
+          </span>
+        </div>
+
+        {isEditing ? (
+          <div className="space-y-2">
+            <input
+              type="datetime-local"
+              value={editValue}
+              onChange={(e) => onEditChange(e.target.value)}
+              className="w-full px-3 py-2 text-sm border-2 border-gray-300 rounded-lg focus:outline-none focus:border-gray-900"
+            />
+            <div className="flex gap-2">
+              <button
+                onClick={onSave}
+                className="flex-1 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg hover:bg-black transition-all font-semibold"
+              >
+                Lưu
+              </button>
+              <button
+                onClick={onCancel}
+                className="flex-1 px-3 py-1.5 bg-gray-200 text-gray-700 text-xs rounded-lg hover:bg-gray-300 transition-all font-semibold"
+              >
+                Hủy
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-center justify-between">
+            <div
+              className={`text-sm font-semibold ${isSpecial ? "text-white" : "text-black"}`}
+            >
+              {formatDateTime(value)}
+            </div>
+            <button
+              onClick={() => onEditClick(field, value)}
+              className={`opacity-0 group-hover:opacity-100 transition-opacity ${
+                isSpecial
+                  ? "text-gray-400 hover:text-white"
+                  : "text-gray-400 hover:text-gray-900"
+              }`}
+            >
+              <i className="fa-solid fa-pen text-sm"></i>
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  };
 export default function SubtaskModal({ task, onClose, onArchive, onUpdate }) {
   const [isRunning, setIsRunning] = useState(false);
   const [seconds, setSeconds] = useState(0);
@@ -105,7 +182,9 @@ export default function SubtaskModal({ task, onClose, onArchive, onUpdate }) {
     setEditingField(field);
     if (currentValue) {
       const date = new Date(currentValue);
-      const localDatetime = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+      const localDatetime = new Date(
+        date.getTime() - date.getTimezoneOffset() * 60000,
+      )
         .toISOString()
         .slice(0, 16);
       setEditValue(localDatetime);
@@ -125,7 +204,7 @@ export default function SubtaskModal({ task, onClose, onArchive, onUpdate }) {
         [editingField]: new Date(editValue).toISOString(),
       };
 
-      // const updatedTask = await onUpdate(task.id, updateData);
+      await onUpdate(task.id, updateData);
       setCurrentTask({ ...currentTask, ...updateData });
       setEditingField(null);
       setEditValue("");
@@ -215,63 +294,7 @@ export default function SubtaskModal({ task, onClose, onArchive, onUpdate }) {
     });
   };
 
-  const TimeCard = ({ field, icon, label, value, isSpecial = false }) => {
-    const isEditing = editingField === field;
-
-    return (
-      <div
-        className={`${
-          isSpecial
-            ? "bg-gradient-to-br from-gray-900 to-black border-2 border-gray-800 col-span-2"
-            : "bg-white border-2 border-gray-200 hover:border-gray-400"
-        } rounded-xl p-5 transition-all shadow-sm group`}
-      >
-        <div className={`flex items-center mb-3 ${isSpecial ? "text-gray-300" : "text-gray-700"}`}>
-          <i className={`${icon} mr-2 text-lg`}></i>
-          <span className="text-xs font-bold uppercase tracking-wide">{label}</span>
-        </div>
-
-        {isEditing ? (
-          <div className="space-y-2">
-            <input
-              type="datetime-local"
-              value={editValue}
-              onChange={(e) => setEditValue(e.target.value)}
-              className="w-full px-3 py-2 text-sm border-2 border-gray-300 rounded-lg focus:outline-none focus:border-gray-900"
-            />
-            <div className="flex gap-2">
-              <button
-                onClick={handleSaveEdit}
-                className="flex-1 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg hover:bg-black transition-all font-semibold"
-              >
-                Lưu
-              </button>
-              <button
-                onClick={handleCancelEdit}
-                className="flex-1 px-3 py-1.5 bg-gray-200 text-gray-700 text-xs rounded-lg hover:bg-gray-300 transition-all font-semibold"
-              >
-                Hủy
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className="flex items-center justify-between">
-            <div className={`text-sm font-semibold ${isSpecial ? "text-white" : "text-black"}`}>
-              {formatDateTime(value)}
-            </div>
-            <button
-              onClick={() => handleEditClick(field, value)}
-              className={`opacity-0 group-hover:opacity-100 transition-opacity ${
-                isSpecial ? "text-gray-400 hover:text-white" : "text-gray-400 hover:text-gray-900"
-              }`}
-            >
-              <i className="fa-solid fa-pen text-sm"></i>
-            </button>
-          </div>
-        )}
-      </div>
-    );
-  };
+  
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 backdrop-blur-sm">
@@ -284,7 +307,9 @@ export default function SubtaskModal({ task, onClose, onArchive, onUpdate }) {
           >
             ✖
           </button>
-          <h2 className="text-3xl font-bold text-white pr-10 mb-2">{currentTask.title}</h2>
+          <h2 className="text-3xl font-bold text-white pr-10 mb-2">
+            {currentTask.title}
+          </h2>
           {currentTask.description && (
             <p className="text-gray-300 text-sm leading-relaxed pr-10">
               {currentTask.description}
@@ -342,12 +367,26 @@ export default function SubtaskModal({ task, onClose, onArchive, onUpdate }) {
               icon="fa-solid fa-clock"
               label="Bắt đầu"
               value={currentTask.startTime}
+              editingField={editingField}
+              editValue={editValue}
+              onEditClick={handleEditClick}
+              onEditChange={setEditValue}
+              onSave={handleSaveEdit}
+              onCancel={handleCancelEdit}
+              formatDateTime={formatDateTime}
             />
             <TimeCard
               field="endTime"
               icon="fa-solid fa-flag-checkered"
               label="Kết thúc"
               value={currentTask.endTime}
+              editingField={editingField}
+              editValue={editValue}
+              onEditClick={handleEditClick}
+              onEditChange={setEditValue}
+              onSave={handleSaveEdit}
+              onCancel={handleCancelEdit}
+              formatDateTime={formatDateTime}
             />
             <TimeCard
               field="dueDate"
@@ -355,6 +394,13 @@ export default function SubtaskModal({ task, onClose, onArchive, onUpdate }) {
               label="Hạn chót"
               value={currentTask.dueDate}
               isSpecial={true}
+              editingField={editingField}
+              editValue={editValue}
+              onEditClick={handleEditClick}
+              onEditChange={setEditValue}
+              onSave={handleSaveEdit}
+              onCancel={handleCancelEdit}
+              formatDateTime={formatDateTime}
             />
           </div>
 
@@ -506,7 +552,9 @@ export default function SubtaskModal({ task, onClose, onArchive, onUpdate }) {
                       <span className="flex-shrink-0 w-7 h-7 rounded-full bg-gray-900 text-white text-xs font-bold flex items-center justify-center group-hover:scale-110 transition-transform">
                         {index + 1}
                       </span>
-                      <span className="flex-1 pt-0.5 break-words">{s.title}</span>
+                      <span className="flex-1 pt-0.5 break-words">
+                        {s.title}
+                      </span>
                     </div>
                     <button
                       onClick={() => handleDeleteSubtask(s.id)}
