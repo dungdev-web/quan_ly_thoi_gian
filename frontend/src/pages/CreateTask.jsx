@@ -53,35 +53,34 @@ export default function CreateTask() {
     const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
 
     if (daysDiff < 0) return "overdue";
-    if (daysDiff === 0) return "today"; 
-    if (daysDiff <= 3) return "urgent"; 
+    if (daysDiff === 0) return "today";
+    if (daysDiff <= 3) return "urgent";
     return null;
   };
-
-  const fetchTodos = async () => {
-    try {
-      const data = await getTodos();
-      const filtered = data.filter((t) => !t.archived);
-      setTodos(filtered);
-
-      // Build columnOrder từ data
-      const order = {};
-      columns.forEach((col) => {
-        order[col.id] = filtered
-          .filter((t) => t.status === col.id)
-          .sort((a, b) => a.position - b.position)
-          .map((t) => t.id);
-      });
-      setColumnOrder(order);
-    } catch (err) {
-      console.error(err);
-      setTodos([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchTodos = async () => {
+      try {
+        const data = await getTodos();
+        const filtered = data.filter((t) => !t.archived);
+        setTodos(filtered);
+
+        // Build columnOrder từ data
+        const order = {};
+        columns.forEach((col) => {
+          order[col.id] = filtered
+            .filter((t) => t.status === col.id)
+            .sort((a, b) => a.position - b.position)
+            .map((t) => t.id);
+        });
+        setColumnOrder(order);
+      } catch (err) {
+        console.error(err);
+        setTodos([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchTodos();
   }, []);
 
