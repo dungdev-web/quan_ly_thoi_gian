@@ -57,7 +57,6 @@ export default function CreateTask() {
     if (daysDiff <= 3) return "urgent";
     return null;
   };
-  useEffect(() => {
     const fetchTodos = async () => {
       try {
         const data = await getTodos();
@@ -81,8 +80,7 @@ export default function CreateTask() {
       }
     };
 
-    fetchTodos();
-  }, []);
+ 
 
   const handleArchiveTodo = async (todoId) => {
     try {
