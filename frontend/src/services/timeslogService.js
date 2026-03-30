@@ -12,19 +12,19 @@ export async function getTodayLog() {
   }
     return response.json();
 }
-export async function getOverview() {
-    const response = await fetch(`${API_URL}/overview`, {
-    method: "GET",
-    credentials: "include", // Gửi kèm cookie
-    headers: {
-        "Content-Type": "application/json",
-    },
-    });
-    if (!response.ok) {
-    throw new Error("Failed to fetch time log overview");
-    }
-    return response.json();
-}
+// export async function getOverview() {
+//     const response = await fetch(`${API_URL}/overview`, {
+//     method: "GET",
+//     credentials: "include", // Gửi kèm cookie
+//     headers: {
+//         "Content-Type": "application/json",
+//     },
+//     });
+//     if (!response.ok) {
+//     throw new Error("Failed to fetch time log overview");
+//     }
+//     return response.json();
+// }
 export async function getChartData() {
     const response = await fetch(`${API_URL}/chart-7-days`, {
     method: "GET",
@@ -78,4 +78,18 @@ export async function StopLog() {
     throw new Error("Failed to stop time log");
     }
     return response.json();;
+}
+export async function getLast7Days() {
+  const res = await fetch(`${API_URL}/chart-7-days`, { credentials: "include" });
+  return res.json();
+}
+
+export async function getOverview() {
+  const res = await fetch(`${API_URL}/overview`, { credentials: "include" });
+  return res.json();
+}
+
+export async function getCategoryStats() {
+  const res = await fetch(`${API_URL}/category-stats`, { credentials: "include" });
+  return res.json();
 }

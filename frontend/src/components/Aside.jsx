@@ -51,6 +51,11 @@ export default function Aside() {
 
     navigate("/archived");
   };
+  const gotoProductivity = () => {
+    setActiveMenu("productivity");
+
+    navigate("/productivity");
+  };
 
   const isActive = (path) => {
     return location.pathname === path;
@@ -136,6 +141,16 @@ export default function Aside() {
             >
               <i className="fa-solid fa-box-archive"></i>
               <p>Archived</p>
+            </button>
+          </li>
+          <li>
+            <button
+              type="button"
+              className={isActive("/productivity") ? "active" : ""}
+              onClick={gotoProductivity}
+            >
+              <i className="fa-solid fa-industry"></i>
+              <p>Productivity</p>
             </button>
           </li>
         </ul>

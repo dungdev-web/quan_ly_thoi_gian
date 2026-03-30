@@ -9,6 +9,7 @@ import MainLayout from "./components/MainLayout";
 import { isLoggedIn } from "./services/authService";
 import { useState, useEffect } from "react";
 import { ToastProvider } from "./components/Toast";
+import ProductivityReport from "./pages/ProductivityReport";
 
 function AppContent() {
   const [auth, setAuth] = useState(null);
@@ -23,7 +24,7 @@ function AppContent() {
     check();
   }, []);
 
-  if (loading) return <Loader />;
+  // if (loading) return <Loader />;
 
   return (
     <Routes>
@@ -39,6 +40,8 @@ function AppContent() {
         <Route path="/home" element={<Home />} />
         <Route path="/create" element={<CreateTask />} />
         <Route path="/archived" element={<ListTask />} />
+        <Route path="/productivity" element={<ProductivityReport />} />
+
       </Route>
 
       {/* catch all */}

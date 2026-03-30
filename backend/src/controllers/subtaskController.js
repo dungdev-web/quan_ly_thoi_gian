@@ -42,7 +42,7 @@ const SubtaskController = {
 
     await SubtaskService.deleteSubtask(userId, id);
 
-    // ✅ trả JSON
+    //  trả JSON
     res.json({ success: true });
   } catch (err) {
     res.status(400).json({ error: err.message });

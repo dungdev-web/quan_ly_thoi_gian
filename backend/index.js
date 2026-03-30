@@ -7,6 +7,7 @@ import authRoutes from "./src/routes/authRoutes.js";
 import todoRoutes from "./src/routes/todoRoutes.js";
 import subtaskRoutes from "./src/routes/subtaskRoutes.js";
 import timeLogRoutes from "./src/routes/timeLog.routes.js";
+import aiRoutes from "./src/routes/aiRoutes.js";
 const datbase_url = process.env.DATABASE_URL;
 console.log(datbase_url);
 
@@ -37,8 +38,9 @@ app.use("/api/auth", authRoutes);
 app.use("/api/todos", todoRoutes);
 app.use("/api/subtasks", subtaskRoutes);
 app.use("/api/time-logs", timeLogRoutes);
+app.use("/api/ai", aiRoutes);
 
 // 5️⃣ Start server
 app.listen(PORT, () => {
-  console.log("✅ Server running on port", PORT);
+  console.log("Server running on port", PORT);
 });

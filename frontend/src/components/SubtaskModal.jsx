@@ -105,7 +105,7 @@ export default function SubtaskModal({ task, onClose, onArchive, onUpdate }) {
         title: newSubtaskTitle,
       });
 
-      // ✅ update UI ngay
+      //  update UI ngay
       setCurrentTask((prev) => ({
         ...prev,
         subtasks: [...(prev.subtasks || []), newSubtask],
@@ -126,7 +126,7 @@ export default function SubtaskModal({ task, onClose, onArchive, onUpdate }) {
       // Gọi API delete nếu có
       await deleteSubtask(subtaskId);
 
-      // ✅ Cập nhật UI ngay
+      //  Cập nhật UI ngay
       setCurrentTask((prev) => ({
         ...prev,
         subtasks: prev.subtasks.filter((s) => s.id !== subtaskId),

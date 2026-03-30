@@ -17,8 +17,8 @@ const UserController = {
       const { user, token } = await UserService.login(username, password);
       res.cookie("token", token, {
         httpOnly: true,
-        secure: true, // ✅ BẮT BUỘC HTTPS
-        sameSite: "none", // ✅ BẮT BUỘC cross-domain
+        secure: true, //  BẮT BUỘC HTTPS
+        sameSite: "none", //  BẮT BUỘC cross-domain
         maxAge: 24 * 60 * 60 * 1000,
       });
 

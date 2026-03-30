@@ -66,9 +66,11 @@ export default function Home() {
     if (active && payload && payload.length) {
       return (
         <div className="bg-white px-4 py-3 rounded-lg shadow-lg border-2 border-gray-900">
-          <p className="text-sm font-semibold text-gray-900">{payload[0].payload.day}</p>
+          <p className="text-sm font-semibold text-gray-900">
+            {payload[0].payload.day}
+          </p>
           <p className="text-lg font-bold text-gray-900 mt-1">
-            {payload[0].value} hours
+            {payload[0].value} giờ
           </p>
         </div>
       );
@@ -87,17 +89,20 @@ export default function Home() {
                 Dashboard
               </h1>
               <p className="text-gray-300 text-sm">
-                Welcome back! Here's your productivity overview
+                Chào mừng bạn quay lại! Dưới đây là tổng quan về năng suất làm
+                việc của bạn.{" "}
               </p>
             </div>
             <div className="flex items-center gap-3">
               <div className="text-right">
-                <p className="text-gray-400 text-xs uppercase tracking-wide">Today</p>
+                <p className="text-gray-400 text-xs uppercase tracking-wide">
+                  Hôm nay
+                </p>
                 <p className="text-white text-lg font-bold">
-                  {new Date().toLocaleDateString("en-US", { 
-                    month: "short", 
+                  {new Date().toLocaleDateString("vi-VI", {
+                    month: "short",
                     day: "numeric",
-                    year: "numeric"
+                    year: "numeric",
                   })}
                 </p>
               </div>
@@ -116,7 +121,7 @@ export default function Home() {
               </div>
             </div>
             <p className="text-gray-600 text-sm font-semibold uppercase tracking-wide mb-2">
-              Today Working Hours
+              Giờ làm việc hôm nay
             </p>
             <h2 className="text-4xl font-bold text-gray-900">
               {convertToHHMM(overview?.todayMinutes)}
@@ -130,7 +135,7 @@ export default function Home() {
               </div>
             </div>
             <p className="text-gray-600 text-sm font-semibold uppercase tracking-wide mb-2">
-              This Week
+              Tuần này
             </p>
             <h2 className="text-4xl font-bold text-gray-900">
               {convertToHHMM(overview?.totalWeekMinutes)}
@@ -144,7 +149,7 @@ export default function Home() {
               </div>
             </div>
             <p className="text-gray-600 text-sm font-semibold uppercase tracking-wide mb-2">
-              Tasks Done
+              Tasks hoàn thành
             </p>
             <h2 className="text-4xl font-bold text-gray-900">
               {overview?.tasksDone || 0}
@@ -158,7 +163,7 @@ export default function Home() {
               </div>
             </div>
             <p className="text-gray-600 text-sm font-semibold uppercase tracking-wide mb-2">
-              Focus Sessions
+              Phiên tập trung
             </p>
             <h2 className="text-4xl font-bold text-gray-900">
               {overview?.focusSessions || 0}
@@ -171,13 +176,14 @@ export default function Home() {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h3 className="text-2xl font-bold text-gray-900 mb-1">
-                Weekly Working Hours
-              </h3>
-              <p className="text-gray-600 text-sm">Your productivity trend for 2025</p>
+Giờ làm việc hàng tuần              </h3>
+              <p className="text-gray-600 text-sm">
+                Xu hướng năng suất của bạn trong năm 2025
+              </p>
             </div>
             <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg">
               <div className="w-3 h-3 rounded-full bg-gray-900"></div>
-              <span className="text-sm font-semibold text-gray-700">Hours</span>
+              <span className="text-sm font-semibold text-gray-700">Giờ</span>
             </div>
           </div>
 
@@ -185,14 +191,14 @@ export default function Home() {
             <ResponsiveContainer>
               <LineChart data={chartData || []}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                <XAxis 
-                  dataKey="day" 
+                <XAxis
+                  dataKey="day"
                   stroke="#6b7280"
-                  style={{ fontSize: '12px', fontWeight: '600' }}
+                  style={{ fontSize: "12px", fontWeight: "600" }}
                 />
-                <YAxis 
+                <YAxis
                   stroke="#6b7280"
-                  style={{ fontSize: '12px', fontWeight: '600' }}
+                  style={{ fontSize: "12px", fontWeight: "600" }}
                 />
                 <Tooltip content={<CustomTooltip />} />
                 <Line
@@ -200,8 +206,8 @@ export default function Home() {
                   dataKey="hours"
                   stroke="#000000"
                   strokeWidth={3}
-                  dot={{ fill: '#000000', strokeWidth: 2, r: 5 }}
-                  activeDot={{ r: 7, fill: '#000000' }}
+                  dot={{ fill: "#000000", strokeWidth: 2, r: 5 }}
+                  activeDot={{ r: 7, fill: "#000000" }}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -213,10 +219,10 @@ export default function Home() {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h3 className="text-2xl font-bold text-gray-900 mb-1">
-                Today's Tasks
+                Tasks ngày hôm nay
               </h3>
               <p className="text-gray-600 text-sm">
-                {todayLog?.logs?.length || 0} tasks tracked today
+                {todayLog?.logs?.length || 0} theo dõi nhiệm vụ ngày hôm nay
               </p>
             </div>
           </div>
@@ -230,19 +236,19 @@ export default function Home() {
                       Task
                     </th>
                     <th className="py-4 px-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wide">
-                      Time
+                      Thời gian
                     </th>
                     <th className="py-4 px-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wide">
-                      Status
+                      Trạng thái
                     </th>
                   </tr>
                 </thead>
                 <tbody>
                   {todayLog.logs.map((log, index) => (
-                    <tr 
-                      key={log.id} 
+                    <tr
+                      key={log.id}
                       className={`border-b border-gray-200 hover:bg-gray-50 transition-colors ${
-                        index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                        index % 2 === 0 ? "bg-white" : "bg-gray-50"
                       }`}
                     >
                       <td className="py-4 px-4">
@@ -258,10 +264,13 @@ export default function Home() {
                           })}
                           {" - "}
                           {log.endTime
-                            ? new Date(log.endTime).toLocaleTimeString("vi-VN", {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })
+                            ? new Date(log.endTime).toLocaleTimeString(
+                                "vi-VN",
+                                {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                },
+                              )
                             : "Running"}
                         </p>
                       </td>
@@ -271,8 +280,8 @@ export default function Home() {
                             log.todo?.status === "done"
                               ? "bg-gray-900 text-white"
                               : log.todo?.status === "in-progress"
-                              ? "bg-gray-200 text-gray-900"
-                              : "bg-gray-100 text-gray-600"
+                                ? "bg-gray-200 text-gray-900"
+                                : "bg-gray-100 text-gray-600"
                           }`}
                         >
                           {log.todo?.status || "unknown"}
@@ -288,8 +297,12 @@ export default function Home() {
               <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
                 <i className="fa-solid fa-clipboard-list text-4xl text-gray-300"></i>
               </div>
-              <p className="text-gray-500 font-semibold text-lg">No tasks tracked today</p>
-              <p className="text-gray-400 text-sm mt-2">Start tracking your tasks to see them here</p>
+              <p className="text-gray-500 font-semibold text-lg">
+                Hôm nay không có nhiệm vụ nào được theo dõi.
+              </p>
+              <p className="text-gray-400 text-sm mt-2">
+                Bắt đầu theo dõi các nhiệm vụ của bạn để xem chúng ở đây.
+              </p>
             </div>
           )}
         </div>

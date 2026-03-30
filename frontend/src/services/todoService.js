@@ -1,4 +1,4 @@
-import { checkLogin } from "./authService"; // ✅ Lấy danh sách todos (cookie tự gửi theo request)
+import { checkLogin } from "./authService"; //  Lấy danh sách todos (cookie tự gửi theo request)
 const API_URL = process.env.REACT_APP_API_URL+"/api/todos";
 export async function getTodos() {
   const { loggedIn, user } = await checkLogin();
@@ -18,7 +18,7 @@ function normalizeDateTime(dt) {
   return dt;
 }
 
-// ✅ Thêm todo mới
+// Thêm todo mới
 export async function addTodo(data) {
   const payload = {
     ...data,
@@ -39,7 +39,7 @@ export async function addTodo(data) {
   return res.json();
 }
 
-// ✅ Xóa todo
+//  Xóa todo
 export async function deleteTodo(id) {
   const res = await fetch(`${API_URL}/${id}`, {
     method: "DELETE",
@@ -69,7 +69,7 @@ export async function update(id, data) {
   const res = await fetch(`${API_URL}/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data), // ✅ ĐÚNG
+    body: JSON.stringify(data), //  ĐÚNG
     credentials: "include",
   });
 
