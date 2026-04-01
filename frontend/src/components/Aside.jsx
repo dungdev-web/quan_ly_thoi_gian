@@ -56,6 +56,11 @@ export default function Aside() {
 
     navigate("/productivity");
   };
+  const gotoCategory = () => {
+    setActiveMenu("categories");
+
+    navigate("/categories");
+  };
 
   const isActive = (path) => {
     return location.pathname === path;
@@ -67,18 +72,17 @@ export default function Aside() {
       <header className="sidebar-header ">
         <div className="logo-wrapper flex flex-col items-center justify-center p-9">
           <div>
-          <img src={logo} alt="logo" className="logo-full" />
+            <img src={logo} alt="logo" className="logo-full" />
 
-          <div className="logo-mark">S</div>
+            <div className="logo-mark">S</div>
           </div>
-        <button
-          className="toggle-btn"
-          onClick={() => setIsCollapsed(!isCollapsed)}
-        >
-          <i className="fa-solid fa-bars"></i>
-        </button>
+          <button
+            className="toggle-btn"
+            onClick={() => setIsCollapsed(!isCollapsed)}
+          >
+            <i className="fa-solid fa-bars"></i>
+          </button>
         </div>
-
       </header>
 
       <nav>
@@ -99,7 +103,7 @@ export default function Aside() {
           <li>
             <button
               type="button"
-             className={isActive("/create") ? "active" : ""}
+              className={isActive("/create") ? "active" : ""}
               onClick={gotoCreateArticle}
             >
               <i className="fa-solid fa-plus-circle"></i>
@@ -151,6 +155,16 @@ export default function Aside() {
             >
               <i className="fa-solid fa-industry"></i>
               <p>Productivity</p>
+            </button>
+          </li>
+          {/* Categorry */}
+          <li>
+            <button
+              type="button"
+              className={isActive("/categories") ? "active" : ""}
+              onClick={gotoCategory}
+            >
+              <i className="fa-solid fa-layer-group"></i> <p>Category</p>
             </button>
           </li>
         </ul>

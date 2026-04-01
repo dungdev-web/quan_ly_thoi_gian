@@ -10,7 +10,7 @@ import { isLoggedIn } from "./services/authService";
 import { useState, useEffect } from "react";
 import { ToastProvider } from "./components/Toast";
 import ProductivityReport from "./pages/ProductivityReport";
-
+import CategoryManager from "./components/CategoryManager";
 function AppContent() {
   const [auth, setAuth] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -41,7 +41,7 @@ function AppContent() {
         <Route path="/create" element={<CreateTask />} />
         <Route path="/archived" element={<ListTask />} />
         <Route path="/productivity" element={<ProductivityReport />} />
-
+        <Route path="/categories" element={<CategoryManager />} />
       </Route>
 
       {/* catch all */}

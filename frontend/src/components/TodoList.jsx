@@ -1,14 +1,30 @@
 import { Droppable, Draggable } from "@hello-pangea/dnd";
 
-export default function TodoList({ column, tasks, getDeadlineStatus, onTaskClick, onDelete, priorityMap = {} }) {
+export default function TodoList({
+  column,
+  tasks,
+  getDeadlineStatus,
+  onTaskClick,
+  onDelete,
+  priorityMap = {},
+}) {
   return (
     <Droppable droppableId={column.id}>
       {(provided, snapshot) => (
-        <div ref={provided.innerRef} {...provided.droppableProps} className="flex flex-col h-full">
+        <div
+          ref={provided.innerRef}
+          {...provided.droppableProps}
+          className="flex flex-col h-full"
+        >
           {/* Column Header */}
-          <div className={`bg-gradient-to-br ${column.color} rounded-2xl p-4 mb-4 shadow-lg`}>
+          <div
+            className={`bg-gradient-to-br ${column.color} rounded-2xl p-4 mb-4 shadow-lg`}
+          >
             <div className="flex items-center justify-between">
-                <div className="flex items-center justify-center gap-2 text-white text-center"><i className={` ${column.icon}`}></i><h2 className="font-bold text-lg">{column.title}</h2></div>
+              <div className="flex items-center justify-center gap-2 text-white text-center">
+                <i className={` ${column.icon}`}></i>
+                <h2 className="font-bold text-lg">{column.title}</h2>
+              </div>
               <span className="bg-white bg-opacity-20 text-white text-sm font-bold px-3 py-1 rounded-full">
                 {tasks.length}
               </span>
@@ -17,15 +33,25 @@ export default function TodoList({ column, tasks, getDeadlineStatus, onTaskClick
 
           {/* Column Content */}
           <div
-            className={`flex-1 bg-white bg-opacity-50 rounded-2xl p-4 min-h-[400px] transition-all ${
-              snapshot.isDraggingOver ? "bg-gray-200 shadow-inner ring-2 ring-gray-400" : ""
+            className={`flex-1 bg-white bg-opacity-50 rounded-2xl p-4  transition-all ${
+              snapshot.isDraggingOver
+                ? "bg-gray-200 shadow-inner ring-2 ring-gray-400"
+                : ""
             }`}
           >
-            <div className="space-y-3">
+            <div className="space-y-3 overflow-y-auto max-h-[calc(100vh-320px)] pr-1">
+              {" "}
               {tasks.map((task, index) => {
-                const deadlineStatus = getDeadlineStatus(task.dueDate, task.status);
+                const deadlineStatus = getDeadlineStatus(
+                  task.dueDate,
+                  task.status,
+                );
                 return (
-                  <Draggable key={task.id} draggableId={task.id.toString()} index={index}>
+                  <Draggable
+                    key={task.id}
+                    draggableId={task.id.toString()}
+                    index={index}
+                  >
                     {(provided, snapshot) => (
                       <div
                         ref={provided.innerRef}
@@ -47,14 +73,17 @@ export default function TodoList({ column, tasks, getDeadlineStatus, onTaskClick
                             <span className="text-xs font-bold bg-yellow-100 text-yellow-800 border border-yellow-300 px-2 py-0.5 rounded-full">
                               ✨ #{priorityMap[task.id].priority}
                             </span>
-                            <span className="text-xs text-gray-400 truncate">{priorityMap[task.id].reason}</span>
+                            <span className="text-xs text-gray-400 truncate">
+                              {priorityMap[task.id].reason}
+                            </span>
                           </div>
                         )}
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex-1 min-w-0">
                             <h3
                               className={`font-semibold mb-2 truncate ${
-                                deadlineStatus === "overdue" || deadlineStatus === "today"
+                                deadlineStatus === "overdue" ||
+                                deadlineStatus === "today"
                                   ? "text-red-700"
                                   : deadlineStatus === "urgent"
                                     ? "text-orange-700"
@@ -81,21 +110,34 @@ export default function TodoList({ column, tasks, getDeadlineStatus, onTaskClick
                                 }`}
                               >
                                 <i className="fa-solid fa-calendar"></i>
-                                <span>{new Date(task.dueDate).toLocaleDateString("vi-VN")}</span>
+                                <span>
+                                  {new Date(task.dueDate).toLocaleDateString(
+                                    "vi-VN",
+                                  )}
+                                </span>
                                 {deadlineStatus === "overdue" && (
-                                  <span className="ml-1 px-2 py-0.5 bg-red-600 text-white text-xs rounded-full">OVERDUE</span>
+                                  <span className="ml-1 px-2 py-0.5 bg-red-600 text-white text-xs rounded-full">
+                                    OVERDUE
+                                  </span>
                                 )}
                                 {deadlineStatus === "today" && (
-                                  <span className="ml-1 px-2 py-0.5 bg-orange-600 text-white text-xs rounded-full">TODAY</span>
+                                  <span className="ml-1 px-2 py-0.5 bg-orange-600 text-white text-xs rounded-full">
+                                    TODAY
+                                  </span>
                                 )}
                                 {deadlineStatus === "urgent" && (
-                                  <span className="ml-1 px-2 py-0.5 bg-yellow-600 text-white text-xs rounded-full">SOON</span>
+                                  <span className="ml-1 px-2 py-0.5 bg-yellow-600 text-white text-xs rounded-full">
+                                    SOON
+                                  </span>
                                 )}
                               </div>
                             )}
                           </div>
                           <button
-                            onClick={(e) => { e.stopPropagation(); onDelete(task.id); }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onDelete(task.id);
+                            }}
                             className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-600 flex-shrink-0"
                           >
                             <i className="fa-solid fa-trash text-sm"></i>

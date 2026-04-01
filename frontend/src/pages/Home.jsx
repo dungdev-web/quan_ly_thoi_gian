@@ -178,7 +178,7 @@ export default function Home() {
               <h3 className="text-2xl font-bold text-gray-900 mb-1">
 Giờ làm việc hàng tuần              </h3>
               <p className="text-gray-600 text-sm">
-                Xu hướng năng suất của bạn trong năm 2025
+                Xu hướng năng suất của bạn trong năm 2026
               </p>
             </div>
             <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg">

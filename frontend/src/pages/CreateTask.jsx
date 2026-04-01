@@ -7,6 +7,7 @@ import {
   update,
   setArchivedTodo,
 } from "../services/todoService";
+import { getCategoriesByUser } from "../services/categoryService"; // fe service
 import { prioritizeTodos } from "../services/aiService";
 import CreateTaskModal from "../components/CreateTaskModal";
 import { DragDropContext } from "@hello-pangea/dnd";
@@ -23,6 +24,7 @@ export default function CreateTask() {
   const [openTask, setOpenTask] = useState(null);
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
+  const [categories, setCategories] = useState([]);
 
   // ── AI states ──────────────────────────────────────────────
   const [aiPrioritizing, setAiPrioritizing] = useState(false);
@@ -30,16 +32,34 @@ export default function CreateTask() {
   const [showPriority, setShowPriority] = useState(false);
 
   const columns = [
-    { id: "todo",icon:"fa-solid fa-list", title: "Cần làm", color: "from-gray-700 to-gray-800" },
-    { id: "In progress",icon:"fa-solid fa-bolt-lightning", title: "Đang làm", color: "from-gray-800 to-gray-900" },
-    { id: "done",icon:"fa-solid fa-check", title: "Hoàn thành", color: "from-black to-gray-900" },
+    {
+      id: "todo",
+      icon: "fa-solid fa-list",
+      title: "Cần làm",
+      color: "from-gray-700 to-gray-800",
+    },
+    {
+      id: "In progress",
+      icon: "fa-solid fa-bolt-lightning",
+      title: "Đang làm",
+      color: "from-gray-800 to-gray-900",
+    },
+    {
+      id: "done",
+      icon: "fa-solid fa-check",
+      title: "Hoàn thành",
+      color: "from-black to-gray-900",
+    },
   ];
 
   const getDeadlineStatus = (dueDate, status) => {
     if (!dueDate || status === "done") return null;
     const now = new Date();
     const due = new Date(dueDate);
-    const daysDiff = Math.ceil((due.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+    const daysDiff = Math.ceil(
+      (due.setHours(0, 0, 0, 0) - now.setHours(0, 0, 0, 0)) /
+        (1000 * 60 * 60 * 24),
+    );
     if (daysDiff < 0) return "overdue";
     if (daysDiff === 0) return "today";
     if (daysDiff <= 3) return "urgent";
@@ -52,7 +72,10 @@ export default function CreateTask() {
       .filter((t) => {
         if (search.trim()) {
           const q = search.toLowerCase();
-          return t.title.toLowerCase().includes(q) || t.description?.toLowerCase().includes(q);
+          return (
+            t.title.toLowerCase().includes(q) ||
+            t.description?.toLowerCase().includes(q)
+          );
         }
         return true;
       })
@@ -89,7 +112,9 @@ export default function CreateTask() {
       setLoading(false);
     }
   };
-
+  useEffect(() => {
+    getCategoriesByUser().then(setCategories).catch(console.error);
+  }, []);
   useEffect(() => {
     fetchTodos();
   }, []);
@@ -104,10 +129,17 @@ export default function CreateTask() {
     try {
       setAiPrioritizing(true);
       const result = await prioritizeTodos(
-        pendingTodos.map((t) => ({ id: t.id, title: t.title, dueDate: t.dueDate, status: t.status }))
+        pendingTodos.map((t) => ({
+          id: t.id,
+          title: t.title,
+          dueDate: t.dueDate,
+          status: t.status,
+        })),
       );
       const map = {};
-      result.prioritized.forEach((p) => { map[p.id] = { priority: p.priority, reason: p.reason }; });
+      result.prioritized.forEach((p) => {
+        map[p.id] = { priority: p.priority, reason: p.reason };
+      });
       setPriorityMap(map);
       setShowPriority(true);
       toast(result.tip || "AI đã sắp xếp ưu tiên!", "success");
@@ -131,14 +163,20 @@ export default function CreateTask() {
 
   const handleUpdateTask = async (taskId, data) => {
     const updatedTask = await update(taskId, data);
-    setTodos((prev) => prev.map((t) => (t.id === taskId ? { ...t, ...updatedTask } : t)));
+    setTodos((prev) =>
+      prev.map((t) => (t.id === taskId ? { ...t, ...updatedTask } : t)),
+    );
     return updatedTask;
   };
 
   async function onDragEnd(result) {
     const { destination, source, draggableId } = result;
     if (!destination) return;
-    if (destination.droppableId === source.droppableId && destination.index === source.index) return;
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    )
+      return;
 
     const taskId = Number(draggableId);
     const sourceCol = source.droppableId;
@@ -160,8 +198,14 @@ export default function CreateTask() {
       const newDestIds = [...(columnOrder[destCol] || [])];
       const [movedId] = newSourceIds.splice(source.index, 1);
       newDestIds.splice(destination.index, 0, movedId);
-      setColumnOrder((prev) => ({ ...prev, [sourceCol]: newSourceIds, [destCol]: newDestIds }));
-      setTodos((prev) => prev.map((t) => (t.id === taskId ? { ...t, status: destCol } : t)));
+      setColumnOrder((prev) => ({
+        ...prev,
+        [sourceCol]: newSourceIds,
+        [destCol]: newDestIds,
+      }));
+      setTodos((prev) =>
+        prev.map((t) => (t.id === taskId ? { ...t, status: destCol } : t)),
+      );
       try {
         await Promise.all([
           update(taskId, { status: destCol }),
@@ -176,7 +220,13 @@ export default function CreateTask() {
   }
 
   const handleAddTask = async (data) => {
-    await addTodo({ title: data.title, description: data.description, startTime: data.startTime, endTime: data.endTime, dueDate: data.dueDate });
+    await addTodo({
+      title: data.title,
+      description: data.description,
+      startTime: data.startTime,
+      endTime: data.endTime,
+      dueDate: data.dueDate,
+    });
     toast("Task created successfully", "success");
     fetchTodos();
   };
@@ -191,7 +241,8 @@ export default function CreateTask() {
     }
   };
 
-  const getTaskCount = (status) => todos.filter((t) => t.status === status).length;
+  const getTaskCount = (status) =>
+    todos.filter((t) => t.status === status).length;
 
   if (loading)
     return (
@@ -210,7 +261,9 @@ export default function CreateTask() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <h1 className="text-3xl sm:text-4xl font-bold text-white mb-1">Quản lý task</h1>
+              <h1 className="text-3xl sm:text-4xl font-bold text-white mb-1">
+                Quản lý task
+              </h1>
               <p className="text-gray-400 text-sm">
                 {todos.length} tasks • {getTaskCount("done")} hoàn thành
               </p>
@@ -218,7 +271,11 @@ export default function CreateTask() {
             <div className="flex items-center gap-3 flex-shrink-0">
               {/* AI Prioritize Button */}
               <button
-                onClick={showPriority ? () => setShowPriority(false) : handleAIPrioritize}
+                onClick={
+                  showPriority
+                    ? () => setShowPriority(false)
+                    : handleAIPrioritize
+                }
                 disabled={aiPrioritizing}
                 className={`px-4 py-3 rounded-xl font-semibold shadow-lg transition-all transform hover:scale-105 flex items-center gap-2 text-sm ${
                   showPriority
@@ -227,11 +284,18 @@ export default function CreateTask() {
                 } disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none`}
               >
                 {aiPrioritizing ? (
-                  <><i className="fa-solid fa-spinner animate-spin"></i> Đang phân tích...</>
+                  <>
+                    <i className="fa-solid fa-spinner animate-spin"></i> Đang
+                    phân tích...
+                  </>
                 ) : showPriority ? (
-                  <><i className="fa-solid fa-xmark"></i> Tắt AI</>
+                  <>
+                    <i className="fa-solid fa-xmark"></i> Tắt AI
+                  </>
                 ) : (
-                  <><span>✨</span> AI ưu tiên</>
+                  <>
+                    <span>✨</span> AI ưu tiên
+                  </>
                 )}
               </button>
               <button
@@ -252,7 +316,7 @@ export default function CreateTask() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center gap-2 text-sm text-yellow-800">
             <span>✨</span>
             <span className="font-semibold">AI đang sắp xếp ưu tiên —</span>
-            <span>tasks được sort theo mức độ quan trọng. Hover để xem lý do.</span>
+            <span>tasks được sort theo mức độ quan trọng.</span>
           </div>
         </div>
       )}
@@ -271,7 +335,10 @@ export default function CreateTask() {
                 className="w-full pl-11 pr-10 py-2.5 rounded-xl border-2 border-gray-200 bg-gray-50 focus:bg-white focus:outline-none focus:border-gray-900 text-sm font-medium transition-all"
               />
               {search && (
-                <button onClick={() => setSearch("")} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700">
+                <button
+                  onClick={() => setSearch("")}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700"
+                >
                   <i className="fa-solid fa-xmark"></i>
                 </button>
               )}
@@ -303,12 +370,18 @@ export default function CreateTask() {
               <span>
                 Tìm thấy{" "}
                 <strong className="text-gray-900">
-                  {columns.reduce((acc, col) => acc + getColumnTasks(col.id).length, 0)}
+                  {columns.reduce(
+                    (acc, col) => acc + getColumnTasks(col.id).length,
+                    0,
+                  )}
                 </strong>{" "}
                 task
               </span>
               <button
-                onClick={() => { setSearch(""); setFilterStatus("all"); }}
+                onClick={() => {
+                  setSearch("");
+                  setFilterStatus("all");
+                }}
                 className="ml-1 text-gray-400 hover:text-gray-900 font-semibold underline underline-offset-2"
               >
                 Xóa filter
@@ -319,7 +392,7 @@ export default function CreateTask() {
       </div>
 
       {/* Kanban Board */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
         <DragDropContext onDragEnd={onDragEnd}>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {columns.map((column) => (
@@ -354,7 +427,16 @@ export default function CreateTask() {
       )}
 
       {/* AI Chatbot */}
-      <AIChatbot todos={todos} />
+      <AIChatbot
+        todos={todos}
+        categories={categories}
+        onCreateTask={(createdTodo) => {
+          setTodos((prev) => [...prev, createdTodo]);
+        }}
+        onDeleteTasks={(deletedIds) => {
+          setTodos((prev) => prev.filter((t) => !deletedIds.includes(t.id)));
+        }}
+      />
     </div>
   );
 }

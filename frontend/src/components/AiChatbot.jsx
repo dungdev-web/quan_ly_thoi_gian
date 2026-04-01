@@ -1,10 +1,13 @@
 import { useState, useRef, useEffect } from "react";
 import { chatWithAI } from "../services/aiService";
 
-export default function AIChatbot({ todos = [] }) {
+export default function AIChatbot({ todos = [],categories = [], onCreateTask, onDeleteTasks }) {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { role: "ai", text: "Xin chào! Tôi là TempoAI 👋 Hỏi tôi bất cứ điều gì về công việc của bạn nhé!" },
+    {
+      role: "ai",
+      text: "Xin chào! Tôi là TempoAI 👋 Hỏi tôi bất cứ điều gì về công việc của bạn nhé!",
+    },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -19,17 +22,40 @@ export default function AIChatbot({ todos = [] }) {
 
     const userMsg = input.trim();
     setInput("");
-    setMessages((prev) => [...prev, { role: "user", text: userMsg }]);
+    const updatedMessages = [...messages, { role: "user", text: userMsg }];
+    setMessages(updatedMessages);
     setLoading(true);
 
     try {
-      const context = todos.length
-        ? `User có ${todos.length} tasks: ${todos.map((t) => `"${t.title}" (${t.status})`).join(", ")}`
-        : "";
-      const { reply } = await chatWithAI(userMsg, context);
-      setMessages((prev) => [...prev, { role: "ai", text: reply }]);
+      // Context đầy đủ để AI biết task nào cần xóa
+      const context = [
+        todos.length
+          ? `Tasks: ${todos.map((t) => `[id:${t.id}] "${t.title}" (status:${t.status}, dueDate:${t.dueDate ?? "không có"})`).join(", ")}`
+          : "Chưa có task nào",
+        categories.length
+          ? `Danh mục: ${categories.map((c) => `[id:${c.id}] "${c.name}"`).join(", ")}`
+          : "Chưa có danh mục nào",
+      ].join(" | ");
+
+      const result = await chatWithAI(userMsg, context, updatedMessages);
+      const data = typeof result.reply === "object" ? result.reply : result;
+
+      // Xử lý CREATE
+      if (data.createdTodo && onCreateTask) {
+        onCreateTask(data.createdTodo);
+      }
+
+      // Xử lý DELETE
+      if (data.deletedIds?.length > 0 && onDeleteTasks) {
+        onDeleteTasks(data.deletedIds);
+      }
+
+      setMessages((prev) => [...prev, { role: "ai", text: data.reply }]);
     } catch (err) {
-      setMessages((prev) => [...prev, { role: "ai", text: "Xin lỗi, tôi đang gặp sự cố. Thử lại sau nhé!" }]);
+      setMessages((prev) => [
+        ...prev,
+        { role: "ai", text: "Xin lỗi, tôi đang gặp sự cố. Thử lại sau nhé!" },
+      ]);
     } finally {
       setLoading(false);
     }
@@ -58,11 +84,15 @@ export default function AIChatbot({ todos = [] }) {
 
       {/* Chat Window */}
       {open && (
-        <div className="fixed bottom-24 right-6 z-50 w-80 bg-white rounded-3xl shadow-2xl border-2 border-gray-200 flex flex-col overflow-hidden"
-          style={{ height: "460px" }}>
+        <div
+          className="fixed bottom-24 right-6 z-50 w-80 bg-white rounded-3xl shadow-2xl border-2 border-gray-200 flex flex-col overflow-hidden"
+          style={{ height: "460px" }}
+        >
           {/* Header */}
           <div className="bg-gradient-to-r from-gray-900 to-black px-5 py-4 flex items-center gap-3 flex-shrink-0">
-            <div className="w-9 h-9 rounded-full bg-white bg-opacity-10 flex items-center justify-center text-lg">✨</div>
+            <div className="w-9 h-9 rounded-full bg-white bg-opacity-10 flex items-center justify-center text-lg">
+              ✨
+            </div>
             <div>
               <p className="text-white font-bold text-sm">TempoAI</p>
               <p className="text-gray-400 text-xs">Trợ lý thông minh</p>
@@ -73,7 +103,10 @@ export default function AIChatbot({ todos = [] }) {
           {/* Messages */}
           <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 bg-gray-50">
             {messages.map((msg, i) => (
-              <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+              <div
+                key={i}
+                className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+              >
                 <div
                   className={`max-w-[85%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
                     msg.role === "user"
@@ -89,9 +122,18 @@ export default function AIChatbot({ todos = [] }) {
               <div className="flex justify-start">
                 <div className="bg-white border border-gray-200 px-4 py-3 rounded-2xl rounded-bl-md shadow-sm">
                   <div className="flex gap-1 items-center">
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
+                    <div
+                      className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                      style={{ animationDelay: "0ms" }}
+                    ></div>
+                    <div
+                      className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                      style={{ animationDelay: "150ms" }}
+                    ></div>
+                    <div
+                      className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                      style={{ animationDelay: "300ms" }}
+                    ></div>
                   </div>
                 </div>
               </div>

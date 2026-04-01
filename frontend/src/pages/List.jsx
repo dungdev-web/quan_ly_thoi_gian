@@ -219,7 +219,7 @@ export default function ListTask() {
                     <div className="mt-4 flex items-center gap-2">
                       <Tag className="w-4 h-4 text-gray-500" />
                       <span className="text-sm text-gray-600">
-                        {todo.category}
+      {todo.category?.name || todo.category}
                       </span>
                     </div>
                   )}

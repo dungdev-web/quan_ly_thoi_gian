@@ -33,12 +33,12 @@ export async function prioritizeTodos(todos) {
   return res.json();
 }
 
-export async function chatWithAI(message, context = "") {
+export async function chatWithAI(message, context = "",history = []) {
   const res = await fetch(`${API_URL}/chat`, {
     method: "POST",
     credentials: "include",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message, context }),
+    body: JSON.stringify({ message, context, history  }),
   });
   if (!res.ok) throw new Error("Không thể kết nối AI");
   return res.json();

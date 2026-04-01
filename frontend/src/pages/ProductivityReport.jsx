@@ -114,6 +114,7 @@ export default function ProductivityReport() {
         setChartData(last7.result || []);
         setOverview(ov);
         setCategoryStats(cats);
+        
       } catch (err) {
         console.error(err);
       } finally {
@@ -199,7 +200,7 @@ export default function ProductivityReport() {
             color="amber"
           />
           <StatCard
-            icon="fa-solid fa-bullseye" label="Focus sessions"
+            icon="fa-solid fa-bullseye" label="Phiên tập trung"
             value={overview?.focusSessions || 0}
             sub="tuần này"
             color="gray"
