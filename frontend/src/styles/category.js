@@ -28,8 +28,8 @@ const s = {
     background: "var(--color-background-secondary)",
     border: "0.5px solid var(--color-border-secondary)",
     // color: "var(--color-text-secondary)",
-    borderRadius: 20,
-    padding: "2px 8px",
+    // borderRadius: 50,
+    padding: "2px 12px",
   },
   btn: {
     fontSize: 13,
@@ -226,7 +226,7 @@ const s = {
     alignItems: "center",
     justifyContent: "center",
     gap: 6,
-    minHeight: 148,
+    minHeight: 181,
     transition: "background 0.15s",
   },
   addCardPlus: {

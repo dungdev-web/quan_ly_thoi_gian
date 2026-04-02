@@ -159,7 +159,7 @@ export default function ProductivityReport() {
         <div className="mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-white mb-1"><i className="fa-solid fa-chart-area"></i> Báo cáo năng suất</h1>
+              <h1 className="text-3xl font-bold text-white mb-1"> Báo cáo năng suất</h1>
               <p className="text-gray-400 text-sm">Phân tích thói quen làm việc của bạn</p>
             </div>
             <button

@@ -110,24 +110,25 @@ export default function ListTask() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200">
+      <div className=" mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <Archive className="w-8 h-8 text-gray-700" />
-            <h1 className="text-3xl font-bold text-gray-800">
-              Công việc đã lưu trữ
-            </h1>
+        <div className="bg-gradient-to-r from-gray-900 via-black to-gray-900 shadow-2xl">
+          <div className="mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div className="flex items-center gap-3 ">
+              {/* <Archive className="w-8 h-8 text-white" /> */}
+              <h1 className="text-3xl sm:text-4xl font-bold text-white mb-1">
+                Công việc đã lưu trữ
+              </h1>
+            </div>
+            <p className="text-white">
+              Tổng cộng {archivedTodos.length} công việc đã được lưu trữ
+            </p>
           </div>
-          <p className="text-gray-600">
-            Tổng cộng {archivedTodos.length} công việc đã được lưu trữ
-          </p>
         </div>
-
         {/* Todo List */}
         {archivedTodos.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-md p-12 text-center">
+          <div className="bg-white rounded-lg shadow-md py-[236px] text-center">
             <Archive className="w-16 h-16 text-gray-300 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-600 mb-2">
               Chưa có công việc nào được lưu trữ
@@ -137,14 +138,14 @@ export default function ListTask() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
             {archivedTodos.map((todo) => (
               <div
                 key={todo.id}
                 className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200"
               >
                 {/* Card Header */}
-                <div className="bg-gradient-to-r from-gray-600 to-gray-700 p-4 flex justify-between items-center">
+                <div className="bg-gradient-to-br from-gray-800 to-gray-900  mb-4 shadow-lg p-4 flex justify-between items-center">
                   <h3 className="text-xl font-bold text-white truncate">
                     {todo.title}
                   </h3>
@@ -171,25 +172,25 @@ export default function ListTask() {
                   <div className="flex gap-2 mb-4">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(
-                        todo.status
+                        todo.status,
                       )}`}
                     >
                       {todo.status === "done"
                         ? "Hoàn thành"
                         : todo.status === "In progress"
-                        ? "Đang thực hiện"
-                        : "Chờ xử lý"}
+                          ? "Đang thực hiện"
+                          : "Chờ xử lý"}
                     </span>
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-semibold border ${getPriorityColor(
-                        todo.priority
+                        todo.priority,
                       )}`}
                     >
                       {todo.priority === "high"
                         ? "Cao"
                         : todo.priority === "medium"
-                        ? "Trung bình"
-                        : "Thấp"}
+                          ? "Trung bình"
+                          : "Thấp"}
                     </span>
                   </div>
 
@@ -219,7 +220,7 @@ export default function ListTask() {
                     <div className="mt-4 flex items-center gap-2">
                       <Tag className="w-4 h-4 text-gray-500" />
                       <span className="text-sm text-gray-600">
-      {todo.category?.name || todo.category}
+                        {todo.category?.name || todo.category}
                       </span>
                     </div>
                   )}

@@ -258,7 +258,7 @@ export default function CreateTask() {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200">
       {/* Header */}
       <div className="bg-gradient-to-r from-gray-900 via-black to-gray-900 shadow-2xl">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between gap-4">
             <div>
               <h1 className="text-3xl sm:text-4xl font-bold text-white mb-1">
@@ -313,7 +313,7 @@ export default function CreateTask() {
       {/* AI Priority Banner */}
       {showPriority && (
         <div className="bg-yellow-50 border-b-2 border-yellow-300">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center gap-2 text-sm text-yellow-800">
+          <div className="mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center gap-2 text-sm text-yellow-800">
             <span>✨</span>
             <span className="font-semibold">AI đang sắp xếp ưu tiên —</span>
             <span>tasks được sort theo mức độ quan trọng.</span>
@@ -323,7 +323,7 @@ export default function CreateTask() {
 
       {/* Filter Bar */}
       <div className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+        <div className="mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
               <i className="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
@@ -392,7 +392,7 @@ export default function CreateTask() {
       </div>
 
       {/* Kanban Board */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8 pt-4">
         <DragDropContext onDragEnd={onDragEnd}>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {columns.map((column) => (

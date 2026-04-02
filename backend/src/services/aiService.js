@@ -132,7 +132,7 @@ LUÔN trả về JSON theo 3 trường hợp:
 {"reply":"Bạn muốn xếp task này vào danh mục nào? {categories}","action":{"type":"ASKING_CATEGORY"}}
 
 3. User đã đủ thông tin (title + startTime + endTime + dueDate):
-{"reply":"Tôi đã tạo xong task bạn yêu cầu","action":{"type":"CREATE_TASK","task":{"title":"...","description":"mô tả đầy đủ nêu mục tiêu, các bước và nhấn mạnh, lưu ý","status":"todo","priority":"medium","startTime":"YYYY-MM-DDTHH:mm:00","endTime":"YYYY-MM-DDTHH:mm:00","dueDate":"YYYY-MM-DD","categoryId":1}}}
+{"reply":"Tôi đã tạo xong task bạn yêu cầu","action":{"type":"CREATE_TASK","task":{"title":"...","description":"mô tả đầy đủ nêu mục tiêu, các bước và nhấn mạnh 1000 từ, lưu ý","status":"todo","priority":"medium","startTime":"YYYY-MM-DDTHH:mm:00","endTime":"YYYY-MM-DDTHH:mm:00","dueDate":"YYYY-MM-DD","categoryId":1}}}
 
 4. User muốn XÓA TASK (ví dụ: xóa task đã done, xóa task quá deadline, xóa task tên X):
 - Lọc từ danh sách tasks của user theo yêu cầu

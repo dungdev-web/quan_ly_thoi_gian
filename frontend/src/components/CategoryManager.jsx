@@ -57,10 +57,10 @@ export default function CategoryManager() {
     <div  style={s.root}>
       {/* Top bar */}
       <div className="bg-gradient-to-r from-gray-900 via-black to-gray-900 shadow-2xl">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6" style={s.topbar}>
+      <div className=" mx-auto px-4 sm:px-6 lg:px-8 py-6" style={s.topbar}>
         <div style={s.topbarLeft}>
           <span className="text-3xl font-bold text-white mb-1" style={s.sectionLabel}>Danh mục</span>
-          <div className="text-2xl text-white" style={s.countBadge}>{categories.length}</div>
+          <div className="text-2xl rounded-[50%]" style={s.countBadge}>{categories.length}</div>
         </div>
         <button
           onClick={() => setShowForm((v) => !v)}
